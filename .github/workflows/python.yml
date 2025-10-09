@@ -1,0 +1,49 @@
+name: Python Bindings (Optional)
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'py/**'
+      - 'src/python_bindings.cpp'
+      - 'src/dist_interface.*'
+      - '.github/workflows/python.yml'
+
+jobs:
+  python-tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          cd py
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+      
+      - name: Install package
+        working-directory: ./py
+        run: |
+          pip install -e .
+      
+      - name: Run tests
+        working-directory: ./py
+        run: |
+          python -m pytest tests/ -v --cov=philentropy --cov-report=term-missing
+      
+      - name: Test import
+        run: |
+          cd py
+          python -c "import philentropy; print(philentropy.get_dist_methods())"

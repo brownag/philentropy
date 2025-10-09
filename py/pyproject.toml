@@ -1,0 +1,81 @@
+[build-system]
+requires = ["setuptools>=61.0", "pybind11>=2.6.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "philentropy"
+version = "0.11.0.9000"
+description = "Similarity and Distance Quantification between Probability Functions"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {text = "GPL-2.0-or-later"}
+authors = [
+    {name = "Hajk-Georg Drost", email = "hajk-georg.drost@tuebingen.mpg.de"},
+    {name = "Jakub Nowosad", email = "nowosad.jakub@gmail.com"},
+    {name = "Andrew Brown", email = "brown.andrewg@gmail.com"}
+]
+maintainers = [
+    {name = "Andrew Brown", email = "brown.andrewg@gmail.com"}
+]
+keywords = ["distance", "similarity", "probability", "information-theory", "statistics"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: C++",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = [
+    "numpy>=1.19.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=6.0",
+    "pytest-cov",
+]
+dev = [
+    "pytest>=6.0",
+    "pytest-cov",
+    "pybind11>=2.6.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/drostlab/philentropy"
+Documentation = "https://drostlab.github.io/philentropy/"
+Repository = "https://github.com/drostlab/philentropy"
+Issues = "https://github.com/drostlab/philentropy/issues"
+
+[tool.setuptools]
+packages = ["philentropy"]
+
+[tool.setuptools.package-dir]
+philentropy = "philentropy"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["philentropy"]
+omit = ["*/tests/*", "*/test_*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]

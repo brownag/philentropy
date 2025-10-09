@@ -22,7 +22,7 @@
 #include <Rcpp.h> 
 #include <math.h>
 #include <iostream>
-#include "utils.h"
+#include "rcpp_utils.h"
 #include "distances.h"
 
 // @export

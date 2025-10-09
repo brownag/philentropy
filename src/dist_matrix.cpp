@@ -1,12 +1,66 @@
 // [[Rcpp::plugins(cpp11)]]
-// [[Rcpp::depends(RcppParallel)]]
 
 #include <Rcpp.h>
-#include "utils.h"
-#include "dist_dispatch.h"
-#include "InformationTheory.h"
-#include "correlation.h"
-#include <RcppParallel.h>
+#include <cmath>
+#include <limits>
+#include <set>
+
+#include "dist_interface.h"
+#include "rcpp_utils.h"
+
+using philentropy::DistConfig;
+using philentropy::DistributionAxis;
+using philentropy::MatrixView;
+
+namespace {
+
+DistConfig make_config(const std::string& method,
+                       const std::string& unit,
+                       double epsilon,
+                       Rcpp::Nullable<double> p) {
+    double p_value = std::numeric_limits<double>::quiet_NaN();
+    bool has_p = false;
+    if (p.isNotNull()) {
+        p_value = Rcpp::as<double>(p);
+        has_p = true;
+    }
+    philentropy::validate_p_parameter(method, p_value);
+    return DistConfig{method, unit, epsilon, p_value, has_p};
+}
+
+int extract_thread_count(Rcpp::Nullable<int> num_threads) {
+    int requested = 0;
+    if (num_threads.isNotNull()) {
+        requested = Rcpp::as<int>(num_threads);
+    }
+    return philentropy::resolve_num_threads(requested);
+}
+
+MatrixView make_matrix_view(Rcpp::NumericMatrix& mat) {
+    return MatrixView(mat.begin(),
+                      static_cast<std::size_t>(mat.nrow()),
+                      static_cast<std::size_t>(mat.ncol()),
+                      1,
+                      static_cast<std::size_t>(mat.nrow()));
+}
+
+void subtract_from_one(Rcpp::NumericMatrix& matrix) {
+    for (int i = 0; i < matrix.nrow(); ++i) {
+        for (int j = 0; j < matrix.ncol(); ++j) {
+            matrix(i, j) = 1.0 - matrix(i, j);
+        }
+    }
+}
+
+void invert_in_place(Rcpp::NumericMatrix& matrix) {
+    for (int i = 0; i < matrix.nrow(); ++i) {
+        for (int j = 0; j < matrix.ncol(); ++j) {
+            matrix(i, j) = (matrix(i, j) != 0.0) ? 1.0 / matrix(i, j) : R_PosInf;
+        }
+    }
+}
+
+} // namespace
 
 //' @title Distances and Similarities between Two Probability Density Functions
 //' @name dist_one_one
@@ -42,49 +96,21 @@
 //' dist_one_one(P, Q, method = "euclidean", testNA = FALSE)
 //' @export
 // [[Rcpp::export]]
-double dist_one_one(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, const Rcpp::String& method, Rcpp::Nullable<double> p = R_NilValue, const bool& testNA = true, const Rcpp::String& unit = "log", const double& epsilon = 0.00001){
-        std::string unit_str(unit);
-        std::string method_str(method);
-        if (method_str == "minkowski") {
-            if (p.isNotNull()) {
-                return minkowski_internal(P.begin(), P.end(), Q.begin(), Rcpp::as<double>(p));
-            } else {
-                Rcpp::stop("Please specify p for the Minkowski distance.");
-            }
-        }
-        return dispatch_dist_internal(P.begin(), P.end(), Q.begin(), method_str, unit_str, epsilon, NAN);
+double dist_one_one(const Rcpp::NumericVector& P,
+                    const Rcpp::NumericVector& Q,
+                    const Rcpp::String& method,
+                    Rcpp::Nullable<double> p = R_NilValue,
+                    const bool& testNA = true,
+                    const Rcpp::String& unit = "log",
+                    const double& epsilon = 0.00001) {
+    std::string method_str(method);
+    std::string unit_str(unit);
+    DistConfig config = make_config(method_str, unit_str, epsilon, p);
+    return philentropy::dist_one_one(P.begin(),
+                                     Q.begin(),
+                                     static_cast<std::size_t>(P.size()),
+                                     config);
 }
-
-struct OneManyWorker : public RcppParallel::Worker {
-    const RcppParallel::RVector<double> P;
-    RcppParallel::RMatrix<double> dists;
-    RcppParallel::RVector<double> dist_values;
-
-    const std::string method;
-    const bool testNA;
-    const std::string unit;
-    const double epsilon;
-    const double p;
-
-    OneManyWorker(const Rcpp::NumericVector& P_in,
-                  const Rcpp::NumericMatrix& dists_in,
-                  Rcpp::NumericVector& dist_values_in,
-                  const Rcpp::String& method_in,
-                  const bool& testNA_in,
-                  const Rcpp::String& unit_in,
-                  const double& epsilon_in,
-                  const double p_in)
-        : P(P_in), dists(dists_in), dist_values(dist_values_in),
-          method(method_in), testNA(testNA_in),
-          unit(unit_in), epsilon(epsilon_in), p(p_in) {}
-
-    void operator()(std::size_t begin, std::size_t end) {
-        for (std::size_t i = begin; i < end; ++i) {
-            auto Q = dists.row(i);
-            dist_values[i] = dispatch_dist_internal(P.begin(), P.end(), Q.begin(), method, unit, epsilon, p);
-        }
-    }
-};
 
 //' @title Distances and Similarities between One and Many Probability Density Functions
 //' @description This functions computes the distance/dissimilarity between one probability density functions and a set of probability density functions.
@@ -112,7 +138,7 @@ struct OneManyWorker : public RcppParallel::Worker {
 //' Addressing this \code{epsilon} issue is important to avoid cases where distance metrics
 //' return negative values which are not defined and only occur due to the
 //' technical issues of computing x / 0 or 0 / 0 cases.
-//' @param num_threads an integer specifying the number of threads to be used for parallel computations. Default is taken from the `RCPP_PARALLEL_NUM_THREADS` environment variable, or `2` if not set.
+//' @param num_threads an integer specifying the number of threads to be used for parallel computations. Default is taken from the \code{RCPP_PARALLEL_NUM_THREADS} environment variable, or \code{2} if not set.
 //' @return A vector of distance values
 //' @examples
 //'   set.seed(2020-08-20)
@@ -121,51 +147,30 @@ struct OneManyWorker : public RcppParallel::Worker {
 //'   dist_one_many(P, M, method = "euclidean", testNA = FALSE)
 //' @export
 // [[Rcpp::export(name = "dist_one_many")]]
-Rcpp::NumericVector dist_one_many_cpp(const Rcpp::NumericVector& P, Rcpp::NumericMatrix dists, Rcpp::String method, Rcpp::Nullable<double> p = R_NilValue, bool testNA = true, Rcpp::String unit = "log", double epsilon = 0.00001, Rcpp::Nullable<int> num_threads = R_NilValue) {
+Rcpp::NumericVector dist_one_many_cpp(const Rcpp::NumericVector& P,
+                                      Rcpp::NumericMatrix dists,
+                                      Rcpp::String method,
+                                      Rcpp::Nullable<double> p = R_NilValue,
+                                      bool testNA = true,
+                                      Rcpp::String unit = "log",
+                                      double epsilon = 0.00001,
+                                      Rcpp::Nullable<int> num_threads = R_NilValue) {
     std::string method_str(method);
-    int nrows = dists.nrow();
-    Rcpp::NumericVector dist_values(nrows);
-    int n_threads = get_num_threads_cpp(num_threads);
-    double p_val = p.isNotNull() ? Rcpp::as<double>(p) : NAN;
+    std::string unit_str(unit);
+    DistConfig config = make_config(method_str, unit_str, epsilon, p);
+    int threads = extract_thread_count(num_threads);
 
-    validate_p_parameter(method_str, p_val);
-    OneManyWorker worker(P, dists, dist_values, method, testNA, unit, epsilon, p_val);
-    RcppParallel::parallelFor(0, nrows, worker, 1, n_threads);
-
+    Rcpp::NumericVector dist_values(dists.nrow());
+    MatrixView matrix = make_matrix_view(dists);
+    philentropy::dist_one_many(P.begin(),
+                               static_cast<std::size_t>(P.size()),
+                               matrix,
+                               DistributionAxis::Rows,
+                               dist_values.begin(),
+                               config,
+                               threads);
     return dist_values;
 }
-
-struct ManyManyWorker : public RcppParallel::Worker {
-    RcppParallel::RMatrix<double> dists1;
-    RcppParallel::RMatrix<double> dists2;
-    RcppParallel::RMatrix<double> dist_matrix;
-    std::string method;
-    std::string unit;
-    double epsilon;
-    double p;
-
-    ManyManyWorker(Rcpp::NumericMatrix& dists1,
-                   Rcpp::NumericMatrix& dists2,
-                   Rcpp::NumericMatrix& dist_matrix,
-                   std::string method,
-                   std::string unit,
-                   double epsilon,
-                   double p)
-        : dists1(dists1), dists2(dists2), dist_matrix(dist_matrix),
-          method(method), unit(unit), epsilon(epsilon), p(p) {}
-
-    void operator()(std::size_t begin, std::size_t end) {
-        for (std::size_t i = begin; i < end; ++i) {
-            for (std::size_t j = 0; j < (std::size_t)dists2.nrow(); ++j) {
-                auto row_i = dists1.row(i);
-                auto row_j = dists2.row(j);
-                double dist = dispatch_dist_internal(row_i.begin(), row_i.end(), row_j.begin(),
-                                                     method, unit, epsilon, p);
-                dist_matrix(i, j) = dist;
-            }
-        }
-    }
-};
 
 //' @title Distances and Similarities between Many Probability Density Functions
 //' @description This functions computes the distance/dissimilarity between two sets of probability density functions.
@@ -193,7 +198,7 @@ struct ManyManyWorker : public RcppParallel::Worker {
 //' Addressing this \code{epsilon} issue is important to avoid cases where distance metrics
 //' return negative values which are not defined and only occur due to the
 //' technical issues of computing x / 0 or 0 / 0 cases.
-//' @param num_threads an integer specifying the number of threads to be used for parallel computations. Default is taken from the `RCPP_PARALLEL_NUM_THREADS` environment variable, or `2` if not set.
+//' @param num_threads an integer specifying the number of threads to be used for parallel computations. Default is taken from the \code{RCPP_PARALLEL_NUM_THREADS} environment variable, or \code{2} if not set.
 //' @return A matrix of distance values
 //' @examples
 //'   set.seed(2020-08-20)
@@ -202,110 +207,30 @@ struct ManyManyWorker : public RcppParallel::Worker {
 //'   result <- dist_many_many(M1, M2, method = "euclidean", testNA = FALSE)
 //' @export
 // [[Rcpp::export(name = "dist_many_many")]]
-Rcpp::NumericMatrix dist_many_many_cpp(Rcpp::NumericMatrix& dists1, Rcpp::NumericMatrix& dists2, Rcpp::String method, Rcpp::Nullable<double> p = R_NilValue, bool testNA = true, Rcpp::String unit = "log", double epsilon = 0.00001, Rcpp::Nullable<int> num_threads = R_NilValue) {
-    int n1 = dists1.nrow();
-    int n2 = dists2.nrow();
-    Rcpp::NumericMatrix dist_matrix(n1, n2);
+Rcpp::NumericMatrix dist_many_many_cpp(Rcpp::NumericMatrix& dists1,
+                                       Rcpp::NumericMatrix& dists2,
+                                       Rcpp::String method,
+                                       Rcpp::Nullable<double> p = R_NilValue,
+                                       bool testNA = true,
+                                       Rcpp::String unit = "log",
+                                       double epsilon = 0.00001,
+                                       Rcpp::Nullable<int> num_threads = R_NilValue) {
     std::string method_str(method);
     std::string unit_str(unit);
-    int n_threads = get_num_threads_cpp(num_threads);
-    double p_val = p.isNotNull() ? Rcpp::as<double>(p) : NAN;
+    DistConfig config = make_config(method_str, unit_str, epsilon, p);
+    int threads = extract_thread_count(num_threads);
 
-    validate_p_parameter(method_str, p_val);
-    ManyManyWorker worker(dists1, dists2, dist_matrix, method_str, unit_str, epsilon, p_val);
-    RcppParallel::parallelFor(0, n1, worker, 1, n_threads);
-    return dist_matrix;
-}
-
-struct DistMatrixWorker : public RcppParallel::Worker {
-    RcppParallel::RMatrix<double> dists;
-    RcppParallel::RMatrix<double> dist_matrix;
-    std::string method;
-    double epsilon;
-    double p;
-
-    DistMatrixWorker(Rcpp::NumericMatrix& dists,
-                            Rcpp::NumericMatrix& dist_matrix,
-                            std::string method,
-                            double epsilon,
-                            double p)
-        : dists(dists), dist_matrix(dist_matrix), method(method), epsilon(epsilon), p(p) {}
-
-    void operator()(std::size_t begin, std::size_t end) {
-        for (std::size_t i = begin; i < end; ++i) {
-            for (std::size_t j = i; j < (std::size_t)dists.ncol(); ++j) {
-                double dist = 0.0;
-                auto col_i = dists.column(i);
-                auto col_j = dists.column(j);
-                dist = dispatch_dist_internal(col_i.begin(), col_i.end(), col_j.begin(),
-                                              method, "log", epsilon, p);
-                dist_matrix(i, j) = dist;
-                dist_matrix(j, i) = dist;
-            }
-        }
-    }
-};
-
-Rcpp::NumericMatrix DistMatrixWithoutUnitMAT_internal(Rcpp::NumericMatrix dists,
-                                                      std::string method,
-                                                      bool testNA,
-                                                      double epsilon,
-                                                      Rcpp::Nullable<double> p,
-                                                      Rcpp::Nullable<int> num_threads) {
-    int n = dists.ncol();
-    Rcpp::NumericMatrix dist_matrix(n, n);
-    int n_threads = get_num_threads_cpp(num_threads);
-
-    double p_val = NAN;
-    if (p.isNotNull()) p_val = Rcpp::as<double>(p);
-    validate_p_parameter(method, p_val);
-    DistMatrixWorker worker(dists, dist_matrix, method, epsilon, p_val);
-    RcppParallel::parallelFor(0, n, worker, 1, n_threads);
-
-    return dist_matrix;
-}
-
-struct DistMatrixWorkerWithUnit : public RcppParallel::Worker {
-    RcppParallel::RMatrix<double> dists;
-    RcppParallel::RMatrix<double> dist_matrix;
-    std::string method;
-    std::string unit;
-    double epsilon;
-
-    DistMatrixWorkerWithUnit(Rcpp::NumericMatrix& dists,
-                             Rcpp::NumericMatrix& dist_matrix,
-                             std::string method,
-                             std::string unit,
-                             double epsilon)
-        : dists(dists), dist_matrix(dist_matrix), method(method), unit(unit), epsilon(epsilon) {}
-
-    void operator()(std::size_t begin, std::size_t end) {
-        for (std::size_t i = begin; i < end; ++i) {
-            for (std::size_t j = i; j < (std::size_t)dists.ncol(); ++j) {
-                double dist = 0.0;
-                auto col_i = dists.column(i);
-                auto col_j = dists.column(j);
-                dist = dispatch_dist_internal(col_i.begin(), col_i.end(), col_j.begin(), method, unit, epsilon, NAN);
-                dist_matrix(i, j) = dist;
-                dist_matrix(j, i) = dist;
-            }
-        }
-    }
-};
-
-Rcpp::NumericMatrix DistMatrixWithUnitMAT_internal(Rcpp::NumericMatrix dists,
-                                                   std::string method,
-                                                   bool testNA,
-                                                   double epsilon,
-                                                   std::string unit,
-                                                   Rcpp::Nullable<int> num_threads) {
-    int n = dists.ncol();
-    Rcpp::NumericMatrix dist_matrix(n, n);
-    int n_threads = get_num_threads_cpp(num_threads);
-
-    DistMatrixWorkerWithUnit worker(dists, dist_matrix, method, unit, epsilon);
-    RcppParallel::parallelFor(0, n, worker, 1, n_threads);
-
+    Rcpp::NumericMatrix dist_matrix(dists1.nrow(), dists2.nrow());
+    MatrixView left = make_matrix_view(dists1);
+    MatrixView right = make_matrix_view(dists2);
+    philentropy::dist_many_many(left,
+                                DistributionAxis::Rows,
+                                right,
+                                DistributionAxis::Rows,
+                                dist_matrix.begin(),
+                                static_cast<std::size_t>(dist_matrix.nrow()),
+                                config,
+                                threads);
     return dist_matrix;
 }
 
@@ -317,37 +242,56 @@ Rcpp::NumericMatrix distance_cpp(Rcpp::NumericMatrix x,
                                  std::string unit,
                                  double epsilon,
                                  Rcpp::Nullable<int> num_threads) {
-
-    // Define groups of methods
     const std::set<std::string> unit_methods = {
-      "lorentzian", "bhattacharyya", "kullback-leibler", "jeffreys",
-      "k_divergence", "topsoe", "jensen-shannon", "jensen_difference", "taneja"
+        "lorentzian", "bhattacharyya", "kullback-leibler", "jeffreys",
+        "k_divergence", "topsoe", "jensen-shannon", "jensen_difference", "taneja"
     };
 
-    if (unit_methods.count(method)) {
-        return DistMatrixWithUnitMAT_internal(x, method, test_na, epsilon, unit, num_threads);
-    } else if (method == "minkowski") {
-        if (!p.isNotNull()) {
-            Rcpp::stop("Please specify p for the Minkowski distance.");
-        }
-        return DistMatrixWithoutUnitMAT_internal(x, method, test_na, epsilon, p, num_threads);
-    } else if (method == "non-intersection") {
-        Rcpp::NumericMatrix intersection_matrix = DistMatrixWithoutUnitMAT_internal(x, "intersection", test_na, epsilon, p, num_threads);
-        return 1.0 - intersection_matrix;
-    } else if (method == "kulczynski_s") {
-        Rcpp::NumericMatrix kulczynski_d_matrix = DistMatrixWithoutUnitMAT_internal(x, "kulczynski_d", test_na, epsilon, p, num_threads);
-        // Element-wise division, handling potential division by zero
-        for (int i = 0; i < kulczynski_d_matrix.nrow(); ++i) {
-            for (int j = 0; j < kulczynski_d_matrix.ncol(); ++j) {
-                if (kulczynski_d_matrix(i, j) != 0) {
-                    kulczynski_d_matrix(i, j) = 1.0 / kulczynski_d_matrix(i, j);
-                } else {
-                    kulczynski_d_matrix(i, j) = R_PosInf; 
-                }
-            }
-        }
-        return kulczynski_d_matrix;
-    } else {
-        return DistMatrixWithoutUnitMAT_internal(x, method, test_na, epsilon, p, num_threads);
+    DistConfig config = make_config(method, unit, epsilon, p);
+    int threads = extract_thread_count(num_threads);
+
+    MatrixView view = make_matrix_view(x);
+    Rcpp::NumericMatrix result(x.ncol(), x.ncol());
+
+    if (unit_methods.count(method) || method == "minkowski") {
+        philentropy::dist_self_symmetric(view,
+                                         DistributionAxis::Columns,
+                                         result.begin(),
+                                         static_cast<std::size_t>(result.nrow()),
+                                         config,
+                                         threads);
+        return result;
     }
+
+    if (method == "non-intersection") {
+        DistConfig intersection_config = make_config("intersection", unit, epsilon, Rcpp::Nullable<double>());
+        philentropy::dist_self_symmetric(view,
+                                         DistributionAxis::Columns,
+                                         result.begin(),
+                                         static_cast<std::size_t>(result.nrow()),
+                                         intersection_config,
+                                         threads);
+        subtract_from_one(result);
+        return result;
+    }
+
+    if (method == "kulczynski_s") {
+        DistConfig d_config = make_config("kulczynski_d", unit, epsilon, p);
+        philentropy::dist_self_symmetric(view,
+                                         DistributionAxis::Columns,
+                                         result.begin(),
+                                         static_cast<std::size_t>(result.nrow()),
+                                         d_config,
+                                         threads);
+        invert_in_place(result);
+        return result;
+    }
+
+    philentropy::dist_self_symmetric(view,
+                                     DistributionAxis::Columns,
+                                     result.begin(),
+                                     static_cast<std::size_t>(result.nrow()),
+                                     config,
+                                     threads);
+    return result;
 }

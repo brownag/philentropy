@@ -1,0 +1,11 @@
+# Development dependencies
+# Install with: pip install -r requirements-dev.txt
+
+# Testing
+pytest>=6.0
+pytest-cov
+
+# Build dependencies (only needed for development)
+# Note: For building, these are specified in pyproject.toml [build-system]
+# and will be installed automatically in an isolated build environment
+pybind11>=2.6.0

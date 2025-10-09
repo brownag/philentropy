@@ -1,0 +1,10 @@
+include README.md
+include LICENSE
+include requirements.txt
+recursive-include philentropy *.py
+recursive-include ../src *.h *.cpp
+recursive-include ../inst/include *.h
+exclude ../src/RcppExports.cpp
+exclude ../src/distances_rcpp.cpp
+global-exclude *.pyc
+global-exclude __pycache__

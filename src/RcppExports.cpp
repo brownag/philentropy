@@ -787,159 +787,59 @@ END_RCPP
 }
 // as_matrix
 Rcpp::NumericMatrix as_matrix(Rcpp::DataFrame x);
-static SEXP _philentropy_as_matrix_try(SEXP xSEXP) {
+RcppExport SEXP _philentropy_as_matrix(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type x(xSEXP);
     rcpp_result_gen = Rcpp::wrap(as_matrix(x));
     return rcpp_result_gen;
-END_RCPP_RETURN_ERROR
-}
-RcppExport SEXP _philentropy_as_matrix(SEXP xSEXP) {
-    SEXP rcpp_result_gen;
-    {
-        Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_philentropy_as_matrix_try(xSEXP));
-    }
-    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
-    if (rcpp_isInterrupt_gen) {
-        UNPROTECT(1);
-        Rf_onintr();
-    }
-    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
-    if (rcpp_isLongjump_gen) {
-        Rcpp::internal::resumeJump(rcpp_result_gen);
-    }
-    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
-    if (rcpp_isError_gen) {
-        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
-        UNPROTECT(1);
-        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
-    }
-    UNPROTECT(1);
-    return rcpp_result_gen;
+END_RCPP
 }
 // as_data_frame
 Rcpp::DataFrame as_data_frame(Rcpp::NumericMatrix mat);
-static SEXP _philentropy_as_data_frame_try(SEXP matSEXP) {
+RcppExport SEXP _philentropy_as_data_frame(SEXP matSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mat(matSEXP);
     rcpp_result_gen = Rcpp::wrap(as_data_frame(mat));
     return rcpp_result_gen;
-END_RCPP_RETURN_ERROR
-}
-RcppExport SEXP _philentropy_as_data_frame(SEXP matSEXP) {
-    SEXP rcpp_result_gen;
-    {
-        Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_philentropy_as_data_frame_try(matSEXP));
-    }
-    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
-    if (rcpp_isInterrupt_gen) {
-        UNPROTECT(1);
-        Rf_onintr();
-    }
-    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
-    if (rcpp_isLongjump_gen) {
-        Rcpp::internal::resumeJump(rcpp_result_gen);
-    }
-    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
-    if (rcpp_isError_gen) {
-        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
-        UNPROTECT(1);
-        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
-    }
-    UNPROTECT(1);
-    return rcpp_result_gen;
+END_RCPP
 }
 // sum_rcpp
 SEXP sum_rcpp(SEXP vec);
-static SEXP _philentropy_sum_rcpp_try(SEXP vecSEXP) {
+RcppExport SEXP _philentropy_sum_rcpp(SEXP vecSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type vec(vecSEXP);
     rcpp_result_gen = Rcpp::wrap(sum_rcpp(vec));
     return rcpp_result_gen;
-END_RCPP_RETURN_ERROR
-}
-RcppExport SEXP _philentropy_sum_rcpp(SEXP vecSEXP) {
-    SEXP rcpp_result_gen;
-    {
-        Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_philentropy_sum_rcpp_try(vecSEXP));
-    }
-    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
-    if (rcpp_isInterrupt_gen) {
-        UNPROTECT(1);
-        Rf_onintr();
-    }
-    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
-    if (rcpp_isLongjump_gen) {
-        Rcpp::internal::resumeJump(rcpp_result_gen);
-    }
-    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
-    if (rcpp_isError_gen) {
-        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
-        UNPROTECT(1);
-        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
-    }
-    UNPROTECT(1);
-    return rcpp_result_gen;
+END_RCPP
 }
 // est_prob_empirical
 SEXP est_prob_empirical(SEXP CountVec);
-static SEXP _philentropy_est_prob_empirical_try(SEXP CountVecSEXP) {
+RcppExport SEXP _philentropy_est_prob_empirical(SEXP CountVecSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type CountVec(CountVecSEXP);
     rcpp_result_gen = Rcpp::wrap(est_prob_empirical(CountVec));
     return rcpp_result_gen;
-END_RCPP_RETURN_ERROR
-}
-RcppExport SEXP _philentropy_est_prob_empirical(SEXP CountVecSEXP) {
-    SEXP rcpp_result_gen;
-    {
-        Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_philentropy_est_prob_empirical_try(CountVecSEXP));
-    }
-    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
-    if (rcpp_isInterrupt_gen) {
-        UNPROTECT(1);
-        Rf_onintr();
-    }
-    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
-    if (rcpp_isLongjump_gen) {
-        Rcpp::internal::resumeJump(rcpp_result_gen);
-    }
-    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
-    if (rcpp_isError_gen) {
-        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
-        UNPROTECT(1);
-        Rf_error("%s", CHAR(rcpp_msgSEXP_gen));
-    }
-    UNPROTECT(1);
-    return rcpp_result_gen;
+END_RCPP
 }
 
 // validate (ensure exported C++ functions exist before calling them)
 static int _philentropy_RcppExport_validate(const char* sig) { 
     static std::set<std::string> signatures;
     if (signatures.empty()) {
-        signatures.insert("Rcpp::NumericMatrix(*as_matrix)(Rcpp::DataFrame)");
-        signatures.insert("Rcpp::DataFrame(*as_data_frame)(Rcpp::NumericMatrix)");
-        signatures.insert("SEXP(*sum_rcpp)(SEXP)");
-        signatures.insert("SEXP(*est_prob_empirical)(SEXP)");
     }
     return signatures.find(sig) != signatures.end();
 }
 
 // registerCCallable (register entry points for exported C++ functions)
 RcppExport SEXP _philentropy_RcppExport_registerCCallable() { 
-    R_RegisterCCallable("philentropy", "_philentropy_as_matrix", (DL_FUNC)_philentropy_as_matrix_try);
-    R_RegisterCCallable("philentropy", "_philentropy_as_data_frame", (DL_FUNC)_philentropy_as_data_frame_try);
-    R_RegisterCCallable("philentropy", "_philentropy_sum_rcpp", (DL_FUNC)_philentropy_sum_rcpp_try);
-    R_RegisterCCallable("philentropy", "_philentropy_est_prob_empirical", (DL_FUNC)_philentropy_est_prob_empirical_try);
     R_RegisterCCallable("philentropy", "_philentropy_RcppExport_validate", (DL_FUNC)_philentropy_RcppExport_validate);
     return R_NilValue;
 }

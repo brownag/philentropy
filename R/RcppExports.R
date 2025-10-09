@@ -92,7 +92,7 @@ dist_one_one <- function(P, Q, method, p = NULL, testNA = TRUE, unit = "log", ep
 #' Addressing this \code{epsilon} issue is important to avoid cases where distance metrics
 #' return negative values which are not defined and only occur due to the
 #' technical issues of computing x / 0 or 0 / 0 cases.
-#' @param num_threads an integer specifying the number of threads to be used for parallel computations. Default is taken from the `RCPP_PARALLEL_NUM_THREADS` environment variable, or `2` if not set.
+#' @param num_threads an integer specifying the number of threads to be used for parallel computations. Default is taken from the \code{RCPP_PARALLEL_NUM_THREADS} environment variable, or \code{2} if not set.
 #' @return A vector of distance values
 #' @examples
 #'   set.seed(2020-08-20)
@@ -130,7 +130,7 @@ dist_one_many <- function(P, dists, method, p = NULL, testNA = TRUE, unit = "log
 #' Addressing this \code{epsilon} issue is important to avoid cases where distance metrics
 #' return negative values which are not defined and only occur due to the
 #' technical issues of computing x / 0 or 0 / 0 cases.
-#' @param num_threads an integer specifying the number of threads to be used for parallel computations. Default is taken from the `RCPP_PARALLEL_NUM_THREADS` environment variable, or `2` if not set.
+#' @param num_threads an integer specifying the number of threads to be used for parallel computations. Default is taken from the \code{RCPP_PARALLEL_NUM_THREADS} environment variable, or \code{2} if not set.
 #' @return A matrix of distance values
 #' @examples
 #'   set.seed(2020-08-20)

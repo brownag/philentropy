@@ -2,7 +2,7 @@
 #define philentropy_InformationTheory_H philentropy_InformationTheory_H
 
 #include <Rcpp.h>
-#include "utils.h"
+#include "rcpp_utils.h"
 #include "distances.h"
 
 // [[Rcpp::plugins(cpp11)]]

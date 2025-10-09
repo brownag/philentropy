@@ -28,7 +28,7 @@
 #include <Rcpp.h> 
 #include <math.h>
 #include <iostream>
-#include "utils.h"
+#include "rcpp_utils.h"
 
 // [[Rcpp::export]]
 double custom_log2(const double& x ){
@@ -59,7 +59,7 @@ double custom_log10(const double& x ){
 //' @export
 // [[Rcpp::export]]
 double euclidean(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return euclidean_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -74,7 +74,7 @@ double euclidean(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, boo
 //' @export
 // [[Rcpp::export]]
 double manhattan(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return minkowski_internal(P.begin(), P.end(), Q.begin(), 1.0);
 }
 
@@ -92,8 +92,8 @@ double manhattan(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, boo
 //' @export
 // [[Rcpp::export]]
 double minkowski(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, double n, bool testNA = true){
-        if (testNA) check_na(P, Q);
-        validate_p_parameter("minkowski", n);
+        if (testNA) philentropy::check_na(P, Q);
+        philentropy::validate_p_parameter_rcpp("minkowski", n);
         return minkowski_internal(P.begin(), P.end(), Q.begin(), n);
 }
 
@@ -109,7 +109,7 @@ double minkowski(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, dou
 //' @export
 // [[Rcpp::export]]
 double chebyshev(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return chebyshev_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -125,7 +125,7 @@ double chebyshev(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, boo
 //' @export
 // [[Rcpp::export]]
 double sorensen(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return sorensen_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -142,7 +142,7 @@ double sorensen(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool
 //' @export
 // [[Rcpp::export]]
 double gower(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return gower_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -159,7 +159,7 @@ double gower(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool te
 //' @export
 // [[Rcpp::export]]
 double soergel(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return soergel_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -189,7 +189,7 @@ double soergel(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool 
 //' @export
 // [[Rcpp::export]]
 double kulczynski_d(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true, double epsilon = 0.00001){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return kulczynski_d_internal(P.begin(), P.end(), Q.begin(), epsilon);
 }
 
@@ -205,7 +205,7 @@ double kulczynski_d(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, 
 //' @export
 // [[Rcpp::export]]
 double canberra(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return canberra_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -227,7 +227,7 @@ double canberra(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool
 //' @export
 // [[Rcpp::export]]
 double lorentzian(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true, const Rcpp::String unit = "log"){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         std::string unit_str(unit);
         return lorentzian_internal(P.begin(), P.end(), Q.begin(), unit_str);
 }
@@ -244,7 +244,7 @@ double lorentzian(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bo
 //' @export
 // [[Rcpp::export]]
 double intersection_dist(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return intersection_dist_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -260,7 +260,7 @@ double intersection_dist(const Rcpp::NumericVector& P, const Rcpp::NumericVector
 //' @export
 // [[Rcpp::export]]
 double wave_hedges(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return wave_hedges_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -276,7 +276,7 @@ double wave_hedges(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, b
 //' @export
 // [[Rcpp::export]]
 double czekanowski(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return czekanowski_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -293,7 +293,7 @@ double czekanowski(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, b
 //' @export
 // [[Rcpp::export]]
 double motyka(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return motyka_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -309,7 +309,7 @@ double motyka(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool t
 //' @export
 // [[Rcpp::export]]
 double tanimoto(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return tanimoto_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -325,7 +325,7 @@ double tanimoto(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool
 //' @export
 // [[Rcpp::export]]
 double ruzicka(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return ruzicka_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -341,7 +341,7 @@ double ruzicka(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool 
 //' @export
 // [[Rcpp::export]]
 double inner_product(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return inner_product_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -357,7 +357,7 @@ double inner_product(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q,
 //' @export
 // [[Rcpp::export]]
 double harmonic_mean_dist(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return harmonic_mean_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -373,7 +373,7 @@ double harmonic_mean_dist(const Rcpp::NumericVector& P, const Rcpp::NumericVecto
 //' @export
 // [[Rcpp::export]]
 double cosine_dist(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return cosine_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -389,7 +389,7 @@ double cosine_dist(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, b
 //' @export
 // [[Rcpp::export]]
 double kumar_hassebrook(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return hassebrook_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -405,7 +405,7 @@ double kumar_hassebrook(const Rcpp::NumericVector& P, const Rcpp::NumericVector&
 //' @export
 // [[Rcpp::export]]
 double jaccard(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return jaccard_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -421,7 +421,7 @@ double jaccard(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool 
 //' @export
 // [[Rcpp::export]]
 double dice_dist(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return dice_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -437,7 +437,7 @@ double dice_dist(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, boo
 //' @export
 // [[Rcpp::export]]
 double fidelity(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return fidelity_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -486,7 +486,7 @@ double fidelity(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool
 //' @export
 // [[Rcpp::export]]
 double bhattacharyya(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true, const Rcpp::String unit = "log", double epsilon = 0.00001){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         std::string unit_str(unit);
         return bhattacharyya_internal(P.begin(), P.end(), Q.begin(), unit_str, epsilon);
 }
@@ -503,7 +503,7 @@ double bhattacharyya(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q,
 //' @export
 // [[Rcpp::export]]
 double hellinger(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return hellinger_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -518,7 +518,7 @@ double hellinger(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, boo
 //' @export
 // [[Rcpp::export]]
 double matusita(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return matusita_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -533,7 +533,7 @@ double matusita(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool
 //' @export
 // [[Rcpp::export]]
 double squared_chord(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return squared_chord_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -550,7 +550,7 @@ double squared_chord(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q,
 //' @export
 // [[Rcpp::export]]
 double squared_euclidean(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return squared_euclidean_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -580,7 +580,7 @@ double squared_euclidean(const Rcpp::NumericVector& P, const Rcpp::NumericVector
 //' @export
 // [[Rcpp::export]]
 double pearson_chi_sq(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true, double epsilon = 0.00001){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return pearson_internal(P.begin(), P.end(), Q.begin(), epsilon);
 }
 
@@ -610,7 +610,7 @@ double pearson_chi_sq(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q
 //' @export
 // [[Rcpp::export]]
 double neyman_chi_sq(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true, double epsilon = 0.00001){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return neyman_internal(P.begin(), P.end(), Q.begin(), epsilon);
 }
 
@@ -626,7 +626,7 @@ double neyman_chi_sq(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q,
 //' @export
 // [[Rcpp::export]]
 double squared_chi_sq(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return squared_chi_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -642,7 +642,7 @@ double squared_chi_sq(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q
 //' @export
 // [[Rcpp::export]]
 double prob_symm_chi_sq(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return prob_symm_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -660,7 +660,7 @@ double prob_symm_chi_sq(const Rcpp::NumericVector& P, const Rcpp::NumericVector&
 //' @export
 // [[Rcpp::export]]
 double divergence_sq(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return divergence_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -677,7 +677,7 @@ double divergence_sq(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q,
 //' @export
 // [[Rcpp::export]]
 double clark_sq(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return clark_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -693,7 +693,7 @@ double clark_sq(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool
 //' @export
 // [[Rcpp::export]]
 double additive_symm_chi_sq(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return additive_symm_internal(P.begin(), P.end(), Q.begin());
 }
 
@@ -730,7 +730,7 @@ double additive_symm_chi_sq(const Rcpp::NumericVector& P, const Rcpp::NumericVec
 //' @export
 // [[Rcpp::export]]
 double kullback_leibler_distance(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true, const Rcpp::String unit = "log", double epsilon = 0.00001){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         std::string unit_str(unit);
         return kullback_leibler_internal(P.begin(), P.end(), Q.begin(), unit_str, epsilon);
 }
@@ -766,7 +766,7 @@ double kullback_leibler_distance(const Rcpp::NumericVector& P, const Rcpp::Numer
 //' @export
 // [[Rcpp::export]]
 double jeffreys(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true, const Rcpp::String unit = "log", double epsilon = 0.00001){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         std::string unit_str(unit);
         return jeffreys_internal(P.begin(), P.end(), Q.begin(), unit_str, epsilon);
 }
@@ -789,7 +789,7 @@ double jeffreys(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool
 //' @export
 // [[Rcpp::export]]
 double k_divergence(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true, const Rcpp::String unit = "log"){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         std::string unit_str(unit);
         return k_divergence_internal(P.begin(), P.end(), Q.begin(), unit_str);
 }
@@ -812,7 +812,7 @@ double k_divergence(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, 
 //' @export
 // [[Rcpp::export]]
 double topsoe(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true, const Rcpp::String unit = "log"){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         std::string unit_str(unit);
         return topsoe_internal(P.begin(), P.end(), Q.begin(), unit_str);
 }
@@ -835,7 +835,7 @@ double topsoe(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool t
 //' @export
 // [[Rcpp::export]]
 double jensen_shannon(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true, const Rcpp::String unit = "log"){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         std::string unit_str(unit);
         return jensen_shannon_internal(P.begin(), P.end(), Q.begin(), unit_str);
 }
@@ -858,7 +858,7 @@ double jensen_shannon(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q
 //' @export
 // [[Rcpp::export]]
 double jensen_difference(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true, const Rcpp::String unit = "log"){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         std::string unit_str(unit);
         return jensen_difference_internal(P.begin(), P.end(), Q.begin(), unit_str);
 }
@@ -897,7 +897,7 @@ double jensen_difference(const Rcpp::NumericVector& P, const Rcpp::NumericVector
 //' @export
 // [[Rcpp::export]]
 double taneja(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true, const Rcpp::String unit = "log", double epsilon = 0.00001){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         std::string unit_str(unit);
         return taneja_internal(P.begin(), P.end(), Q.begin(), unit_str, epsilon);
 }
@@ -928,7 +928,7 @@ double taneja(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool t
 //' @export
 // [[Rcpp::export]]
 double kumar_johnson(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true, double epsilon = 0.00001){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return kumar_johnson_internal(P.begin(), P.end(), Q.begin(), epsilon);
 }
 
@@ -945,7 +945,7 @@ double kumar_johnson(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q,
 //' @export
 // [[Rcpp::export]]
 double avg(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, bool testNA = true){
-        if (testNA) check_na(P, Q);
+        if (testNA) philentropy::check_na(P, Q);
         return avg_internal(P.begin(), P.end(), Q.begin());
 }
 

@@ -19,3 +19,6 @@ LICENSE
 ^\.vscode$
 ^revdep$
 ^scratch$
+^py$
+^src/python_bindings\.cpp$
+^\.github/workflows/python\.yml$
