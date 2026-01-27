@@ -1,5 +1,6 @@
 // [[Rcpp::plugins(cpp11)]]
 // [[Rcpp::depends(RcppParallel)]]
+// [[Rcpp::interfaces(r, cpp)]] 
 
 #include <Rcpp.h>
 #include "utils.h"

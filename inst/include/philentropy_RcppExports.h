@@ -24,6 +24,90 @@ namespace philentropy {
         }
     }
 
+    inline double dist_one_one(const Rcpp::NumericVector& P, const Rcpp::NumericVector& Q, const Rcpp::String& method, Rcpp::Nullable<double> p = R_NilValue, const bool& testNA = true, const Rcpp::String& unit = "log", const double& epsilon = 0.00001) {
+        typedef SEXP(*Ptr_dist_one_one)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr_dist_one_one p_dist_one_one = NULL;
+        if (p_dist_one_one == NULL) {
+            validateSignature("double(*dist_one_one)(const Rcpp::NumericVector&,const Rcpp::NumericVector&,const Rcpp::String&,Rcpp::Nullable<double>,const bool&,const Rcpp::String&,const double&)");
+            p_dist_one_one = (Ptr_dist_one_one)R_GetCCallable("philentropy", "_philentropy_dist_one_one");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_dist_one_one(Shield<SEXP>(Rcpp::wrap(P)), Shield<SEXP>(Rcpp::wrap(Q)), Shield<SEXP>(Rcpp::wrap(method)), Shield<SEXP>(Rcpp::wrap(p)), Shield<SEXP>(Rcpp::wrap(testNA)), Shield<SEXP>(Rcpp::wrap(unit)), Shield<SEXP>(Rcpp::wrap(epsilon)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<double >(rcpp_result_gen);
+    }
+
+    inline Rcpp::NumericVector dist_one_many(const Rcpp::NumericVector& P, Rcpp::NumericMatrix dists, Rcpp::String method, Rcpp::Nullable<double> p = R_NilValue, bool testNA = true, Rcpp::String unit = "log", double epsilon = 0.00001, Rcpp::Nullable<int> num_threads = R_NilValue) {
+        typedef SEXP(*Ptr_dist_one_many)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr_dist_one_many p_dist_one_many = NULL;
+        if (p_dist_one_many == NULL) {
+            validateSignature("Rcpp::NumericVector(*dist_one_many)(const Rcpp::NumericVector&,Rcpp::NumericMatrix,Rcpp::String,Rcpp::Nullable<double>,bool,Rcpp::String,double,Rcpp::Nullable<int>)");
+            p_dist_one_many = (Ptr_dist_one_many)R_GetCCallable("philentropy", "_philentropy_dist_one_many");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_dist_one_many(Shield<SEXP>(Rcpp::wrap(P)), Shield<SEXP>(Rcpp::wrap(dists)), Shield<SEXP>(Rcpp::wrap(method)), Shield<SEXP>(Rcpp::wrap(p)), Shield<SEXP>(Rcpp::wrap(testNA)), Shield<SEXP>(Rcpp::wrap(unit)), Shield<SEXP>(Rcpp::wrap(epsilon)), Shield<SEXP>(Rcpp::wrap(num_threads)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<Rcpp::NumericVector >(rcpp_result_gen);
+    }
+
+    inline Rcpp::NumericMatrix dist_many_many(Rcpp::NumericMatrix& dists1, Rcpp::NumericMatrix& dists2, Rcpp::String method, Rcpp::Nullable<double> p = R_NilValue, bool testNA = true, Rcpp::String unit = "log", double epsilon = 0.00001, Rcpp::Nullable<int> num_threads = R_NilValue) {
+        typedef SEXP(*Ptr_dist_many_many)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr_dist_many_many p_dist_many_many = NULL;
+        if (p_dist_many_many == NULL) {
+            validateSignature("Rcpp::NumericMatrix(*dist_many_many)(Rcpp::NumericMatrix&,Rcpp::NumericMatrix&,Rcpp::String,Rcpp::Nullable<double>,bool,Rcpp::String,double,Rcpp::Nullable<int>)");
+            p_dist_many_many = (Ptr_dist_many_many)R_GetCCallable("philentropy", "_philentropy_dist_many_many");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_dist_many_many(Shield<SEXP>(Rcpp::wrap(dists1)), Shield<SEXP>(Rcpp::wrap(dists2)), Shield<SEXP>(Rcpp::wrap(method)), Shield<SEXP>(Rcpp::wrap(p)), Shield<SEXP>(Rcpp::wrap(testNA)), Shield<SEXP>(Rcpp::wrap(unit)), Shield<SEXP>(Rcpp::wrap(epsilon)), Shield<SEXP>(Rcpp::wrap(num_threads)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<Rcpp::NumericMatrix >(rcpp_result_gen);
+    }
+
+    inline Rcpp::NumericMatrix distance_cpp(Rcpp::NumericMatrix x, std::string method, Rcpp::Nullable<double> p, bool test_na, std::string unit, double epsilon, Rcpp::Nullable<int> num_threads) {
+        typedef SEXP(*Ptr_distance_cpp)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr_distance_cpp p_distance_cpp = NULL;
+        if (p_distance_cpp == NULL) {
+            validateSignature("Rcpp::NumericMatrix(*distance_cpp)(Rcpp::NumericMatrix,std::string,Rcpp::Nullable<double>,bool,std::string,double,Rcpp::Nullable<int>)");
+            p_distance_cpp = (Ptr_distance_cpp)R_GetCCallable("philentropy", "_philentropy_distance_cpp");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_distance_cpp(Shield<SEXP>(Rcpp::wrap(x)), Shield<SEXP>(Rcpp::wrap(method)), Shield<SEXP>(Rcpp::wrap(p)), Shield<SEXP>(Rcpp::wrap(test_na)), Shield<SEXP>(Rcpp::wrap(unit)), Shield<SEXP>(Rcpp::wrap(epsilon)), Shield<SEXP>(Rcpp::wrap(num_threads)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<Rcpp::NumericMatrix >(rcpp_result_gen);
+    }
+
     inline Rcpp::NumericMatrix as_matrix(Rcpp::DataFrame x) {
         typedef SEXP(*Ptr_as_matrix)(SEXP);
         static Ptr_as_matrix p_as_matrix = NULL;
