@@ -142,10 +142,6 @@ dist_many_many <- function(dists1, dists2, method, p = NULL, testNA = TRUE, unit
     .Call(`_philentropy_dist_many_many_cpp`, dists1, dists2, method, p, testNA, unit, epsilon, num_threads)
 }
 
-distance_cpp <- function(x, method, p, test_na, unit, epsilon, num_threads) {
-    .Call(`_philentropy_distance_cpp`, x, method, p, test_na, unit, epsilon, num_threads)
-}
-
 custom_log2 <- function(x) {
     .Call(`_philentropy_custom_log2`, x)
 }
@@ -920,6 +916,10 @@ sum_rcpp <- function(vec) {
 
 est_prob_empirical <- function(CountVec) {
     .Call(`_philentropy_est_prob_empirical`, CountVec)
+}
+
+distance_cpp <- function(x, method, p, test_na, unit, epsilon, num_threads) {
+    .Call(`_philentropy_distance_cpp`, x, method, p, test_na, unit, epsilon, num_threads)
 }
 
 # Register entry points for exported C++ functions
