@@ -225,6 +225,23 @@ RcppExport SEXP _philentropy_dist_many_many_cpp(SEXP dists1SEXP, SEXP dists2SEXP
     UNPROTECT(1);
     return rcpp_result_gen;
 }
+// distance_cpp
+Rcpp::NumericMatrix distance_cpp(Rcpp::NumericMatrix x, std::string method, Rcpp::Nullable<double> p, bool test_na, std::string unit, double epsilon, Rcpp::Nullable<int> num_threads);
+RcppExport SEXP _philentropy_distance_cpp(SEXP xSEXP, SEXP methodSEXP, SEXP pSEXP, SEXP test_naSEXP, SEXP unitSEXP, SEXP epsilonSEXP, SEXP num_threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< std::string >::type method(methodSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<double> >::type p(pSEXP);
+    Rcpp::traits::input_parameter< bool >::type test_na(test_naSEXP);
+    Rcpp::traits::input_parameter< std::string >::type unit(unitSEXP);
+    Rcpp::traits::input_parameter< double >::type epsilon(epsilonSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type num_threads(num_threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(distance_cpp(x, method, p, test_na, unit, epsilon, num_threads));
+    return rcpp_result_gen;
+END_RCPP
+}
 // custom_log2
 double custom_log2(const double& x);
 RcppExport SEXP _philentropy_custom_log2(SEXP xSEXP) {
@@ -881,23 +898,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// distance_cpp
-Rcpp::NumericMatrix distance_cpp(Rcpp::NumericMatrix x, std::string method, Rcpp::Nullable<double> p, bool test_na, std::string unit, double epsilon, Rcpp::Nullable<int> num_threads);
-RcppExport SEXP _philentropy_distance_cpp(SEXP xSEXP, SEXP methodSEXP, SEXP pSEXP, SEXP test_naSEXP, SEXP unitSEXP, SEXP epsilonSEXP, SEXP num_threadsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type x(xSEXP);
-    Rcpp::traits::input_parameter< std::string >::type method(methodSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<double> >::type p(pSEXP);
-    Rcpp::traits::input_parameter< bool >::type test_na(test_naSEXP);
-    Rcpp::traits::input_parameter< std::string >::type unit(unitSEXP);
-    Rcpp::traits::input_parameter< double >::type epsilon(epsilonSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type num_threads(num_threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(distance_cpp(x, method, p, test_na, unit, epsilon, num_threads));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 // validate (ensure exported C++ functions exist before calling them)
 static int _philentropy_RcppExport_validate(const char* sig) { 
@@ -930,6 +930,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_philentropy_dist_one_one", (DL_FUNC) &_philentropy_dist_one_one, 7},
     {"_philentropy_dist_one_many_cpp", (DL_FUNC) &_philentropy_dist_one_many_cpp, 8},
     {"_philentropy_dist_many_many_cpp", (DL_FUNC) &_philentropy_dist_many_many_cpp, 8},
+    {"_philentropy_distance_cpp", (DL_FUNC) &_philentropy_distance_cpp, 7},
     {"_philentropy_custom_log2", (DL_FUNC) &_philentropy_custom_log2, 1},
     {"_philentropy_custom_log10", (DL_FUNC) &_philentropy_custom_log10, 1},
     {"_philentropy_euclidean", (DL_FUNC) &_philentropy_euclidean, 3},
@@ -980,7 +981,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_philentropy_as_data_frame", (DL_FUNC) &_philentropy_as_data_frame, 1},
     {"_philentropy_sum_rcpp", (DL_FUNC) &_philentropy_sum_rcpp, 1},
     {"_philentropy_est_prob_empirical", (DL_FUNC) &_philentropy_est_prob_empirical, 1},
-    {"_philentropy_distance_cpp", (DL_FUNC) &_philentropy_distance_cpp, 7},
     {"_philentropy_RcppExport_registerCCallable", (DL_FUNC) &_philentropy_RcppExport_registerCCallable, 0},
     {NULL, NULL, 0}
 };
