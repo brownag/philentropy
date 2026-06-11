@@ -26,6 +26,10 @@ NULL
   library.dynam.unload("philentropy", libpath)
 }
 
+.is_mixed_df <- function(x) {
+  is.data.frame(x) && any(sapply(x, function(col) is.factor(col) || is.character(col)))
+}
+
 # @title Check the validity of input probability distributions
 valid.distr <- function(x){
         

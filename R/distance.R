@@ -269,7 +269,7 @@ distance <- function(
     stop("'ranges' is only supported for method='gower', 'gower_mixed', or 'gower_numeric'.")
   }
 
-  is_mixed_df <- is.data.frame(x) && any(sapply(x, function(col) is.factor(col) || is.character(col)))
+  is_mixed_df <- .is_mixed_df(x)
 
   if (method == "gower_mixed" || (method == "gower" && is_mixed_df)) {
       if (method == "gower") {
