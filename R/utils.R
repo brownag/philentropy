@@ -57,7 +57,7 @@ getDistMethods <- function(){
         
         distance.names <- vector(mode = "character", length = 46)
         distance.names <- c("euclidean", "manhattan", "minkowski", "chebyshev",
-                            "sorensen", "gower", "soergel", "kulczynski_d",
+                            "sorensen", "gower", "gower_mixed", "soergel", "kulczynski_d",
                             "canberra", "lorentzian", "intersection", "non-intersection",
                             "wavehedges", "czekanowski", "motyka","kulczynski_s",
                             "tanimoto", "ruzicka","inner_product","harmonic_mean",

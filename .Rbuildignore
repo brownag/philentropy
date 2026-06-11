@@ -19,3 +19,5 @@ LICENSE
 ^\.vscode$
 ^revdep$
 ^scratch$
+^\.positai$
+^\.claude$

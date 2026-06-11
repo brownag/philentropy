@@ -4,13 +4,15 @@
 #include <string>
 #include <cmath>
 #include "distances_internal.h"
+#include "gower_internal.h"
 
 // template for dispatching internal distance methods
 template <typename InputIt1, typename InputIt2>
 double dispatch_dist_internal(InputIt1 first1, InputIt1 last1, InputIt2 first2,
                               const std::string& method,
                               const std::string& unit,
-                              double epsilon, double p) {
+                              double epsilon, double p,
+                              const double* ranges = nullptr) {
     if (method == "minkowski") {
         return minkowski_internal(first1, last1, first2, p);
     } else if (method == "euclidean"){
@@ -22,7 +24,23 @@ double dispatch_dist_internal(InputIt1 first1, InputIt1 last1, InputIt2 first2,
     } else if (method == "sorensen") {
         return sorensen_internal(first1, last1, first2);
     } else if (method == "gower") {
-        return gower_internal(first1, last1, first2);
+        // If ranges provided, use range-normalized gower (numeric-only)
+        if (ranges != nullptr) {
+            double sum_dist = 0.0, sum_weight = 0.0;
+            int i = 0;
+            for (auto it1 = first1, it2 = first2; it1 != last1; ++it1, ++it2, ++i) {
+                if (!std::isnan(*it1) && !std::isnan(*it2)) {
+                    double r = ranges[i];
+                    if (r > 0) {
+                        sum_dist += std::abs(*it1 - *it2) / r;
+                    }
+                    sum_weight += 1.0;
+                }
+            }
+            return sum_weight > 0 ? sum_dist / sum_weight : 0.0;
+        } else {
+            return gower_internal(first1, last1, first2);
+        }
     } else if (method == "soergel") {
         return soergel_internal(first1, last1, first2);
     } else if (method == "kulczynski_d") {

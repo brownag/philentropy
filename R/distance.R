@@ -17,7 +17,7 @@
 
 #' @title Distances and Similarities between Probability Density Functions
 #' @description This functions computes the distance/dissimilarity between two probability density functions.
-#' @param x a numeric \code{data.frame} or \code{matrixF} (storing probability vectors) or a numeric \code{data.frame} or \code{matrix} storing counts (if \code{est.prob} is specified).
+#' @param x a numeric \code{data.frame} or \code{matrix} (storing probability vectors) or a numeric \code{data.frame} or \code{matrix} storing counts (if \code{est.prob} is specified).
 #' @param method a character string indicating whether the distance measure that should be computed.
 #' @param p power of the Minkowski distance.
 #' @param test.na a boolean value indicating whether input vectors should be tested for \code{NA} values. Faster computations if \code{test.na = FALSE}.
@@ -46,6 +46,8 @@
 #' @param upper if \code{as.dist.obj = TRUE}, then this value indicates whether the upper triangle of the distance matrix should be printed.
 #' @param mute.message a logical value indicating whether or not messages printed by \code{distance} shall be muted. Default is \code{mute.message = getOption("philentropy.mute.message", default = FALSE)}. Set option "philentropy.mute.message" to control message output for the session.
 #' @param num.threads an integer specifying the number of threads to be used for parallel computations. Default is taken from the `RCPP_PARALLEL_NUM_THREADS` environment variable, or `2` if not set.
+#' @param weights optional numeric vector of weights for each feature. Only used with Gower distance methods (\code{"gower"}, \code{"gower_mixed"}, \code{"gower_numeric"}). If \code{NULL} (default), all features are weighted equally. Must have length equal to \code{ncol(x)}.
+#' @param ranges optional numeric vector of pre-computed ranges for numeric columns. Only used with Gower distance methods. If \code{NULL} (default), ranges are computed from \code{x}.
 #' @author Hajk-Georg Drost
 #' @details
 #' Here a distance is defined as a quantitative degree of how far two mathematical objects are apart from eachother (Cha, 2007).
@@ -222,7 +224,9 @@ distance <- function(
   diag = FALSE,
   upper = FALSE,
   mute.message = getOption("philentropy.mute.message", default = FALSE),
-  num.threads = NULL
+  num.threads = NULL,
+  weights = NULL,
+  ranges = NULL
 ) {
   if (
     !any(is.element(
@@ -255,7 +259,54 @@ distance <- function(
   }
 
   dist_methods <- getDistMethods()
-  
+
+  # Validate that weights/ranges are only used with gower methods
+  gower_methods <- c("gower", "gower_mixed", "gower_numeric")
+  if (!is.null(weights) && !method %in% gower_methods) {
+    stop("'weights' is only supported for method='gower', 'gower_mixed', or 'gower_numeric'.")
+  }
+  if (!is.null(ranges) && !method %in% gower_methods) {
+    stop("'ranges' is only supported for method='gower', 'gower_mixed', or 'gower_numeric'.")
+  }
+
+  is_mixed_df <- is.data.frame(x) && any(sapply(x, function(col) is.factor(col) || is.character(col)))
+
+  if (method == "gower_mixed" || (method == "gower" && is_mixed_df)) {
+      if (method == "gower") {
+          if (isFALSE(mute.message)) {
+              message("Detected mixed-type data.frame; routing 'gower' to 'gower_mixed'.")
+          }
+      }
+    n_threads <- if (is.null(num.threads)) 2L else as.integer(num.threads)
+    result <- gower_mixed(x, weights = weights, ranges = ranges, num_threads = n_threads)
+    if (as.dist.obj) {
+      return(stats::as.dist(result, diag = diag, upper = upper))
+    }
+    return(result)
+  }
+
+  # to force numeric-only gower, extract numeric columns from mixed data
+  if (method == "gower_numeric") {
+    if (is.data.frame(x)) {
+      numeric_mask <- sapply(x, is.numeric)
+      if (!any(numeric_mask)) {
+        stop("No numeric columns found in `x` for method='gower_numeric'.")
+      }
+      if (any(!numeric_mask) && isFALSE(mute.message)) {
+        message("Extracting numeric columns from `x` for gower_numeric method.")
+      }
+      x <- x[, numeric_mask, drop = FALSE]
+      if (!is.null(weights)) weights <- weights[numeric_mask]
+      if (!is.null(ranges)) ranges <- ranges[numeric_mask]
+    }
+    n_threads <- if (is.null(num.threads)) 2L else as.integer(num.threads)
+    result <- gower_mixed(x, weights = weights, ranges = ranges, num_threads = n_threads)
+    if (as.dist.obj) {
+      return(stats::as.dist(result, diag = diag, upper = upper))
+    }
+    return(result)
+  }
+
   # transpose the matrix or data.frame
   # in case of DF: DF is transformed to matrix by t()
   x <- t(x)
@@ -284,7 +335,7 @@ distance <- function(
     message("Metric: '",method, "' with unit: '", unit,
             "'; comparing: ", ncols, " vectors")
   }
-  
+
   # although validation would be great, it cost a lot of computation time
   # for large comparisons between multiple distributions
   # here a smarter (faster) way to validate distributions needs to be implemented
