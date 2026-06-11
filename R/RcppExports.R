@@ -70,7 +70,7 @@ dist_one_one <- function(P, Q, method, p = NULL, testNA = TRUE, unit = "log", ep
 #' @description This functions computes the distance/dissimilarity between one probability density functions and a set of probability density functions.
 #' @param P a numeric vector storing the first distribution.
 #' @param dists a numeric matrix storing distributions in its rows.
-#' @param method a character string indicating whether the distance measure that should be computed.
+#' @param method a character string indicating whether the distance measure that should be computed. For \code{method = "gower_mixed"}, computes numeric-only Gower distance with range normalization.
 #' @param p power of the Minkowski distance.
 #' @param testNA a logical value indicating whether or not distributions shall be checked for \code{NA} values.
 #' @param unit type of \code{log} function. Option are
@@ -93,6 +93,7 @@ dist_one_one <- function(P, Q, method, p = NULL, testNA = TRUE, unit = "log", ep
 #' return negative values which are not defined and only occur due to the
 #' technical issues of computing x / 0 or 0 / 0 cases.
 #' @param num_threads an integer specifying the number of threads to be used for parallel computations. Default is taken from the `RCPP_PARALLEL_NUM_THREADS` environment variable, or `2` if not set.
+#' @param ranges optional numeric vector of pre-computed ranges for numeric columns. Only used with \code{method = "gower"} or \code{method = "gower_mixed"}. If NULL, standard distance computation is used.
 #' @return A vector of distance values
 #' @examples
 #'   set.seed(2020-08-20)
@@ -100,15 +101,15 @@ dist_one_one <- function(P, Q, method, p = NULL, testNA = TRUE, unit = "log", ep
 #'   M <- t(replicate(100, sample(1:10, size = 10) / 55))
 #'   dist_one_many(P, M, method = "euclidean", testNA = FALSE)
 #' @export
-dist_one_many <- function(P, dists, method, p = NULL, testNA = TRUE, unit = "log", epsilon = 0.00001, num_threads = NULL) {
-    .Call(`_philentropy_dist_one_many_cpp`, P, dists, method, p, testNA, unit, epsilon, num_threads)
+dist_one_many <- function(P, dists, method, p = NULL, testNA = TRUE, unit = "log", epsilon = 0.00001, num_threads = NULL, ranges = NULL) {
+    .Call(`_philentropy_dist_one_many_cpp`, P, dists, method, p, testNA, unit, epsilon, num_threads, ranges)
 }
 
 #' @title Distances and Similarities between Many Probability Density Functions
 #' @description This functions computes the distance/dissimilarity between two sets of probability density functions.
 #' @param dists1 a numeric matrix storing distributions in its rows.
 #' @param dists2 a numeric matrix storing distributions in its rows.
-#' @param method a character string indicating whether the distance measure that should be computed.
+#' @param method a character string indicating whether the distance measure that should be computed. For \code{method = "gower_mixed"}, computes numeric-only Gower distance with range normalization.
 #' @param p power of the Minkowski distance.
 #' @param testNA a logical value indicating whether or not distributions shall be checked for \code{NA} values.
 #' @param unit type of \code{log} function. Option are
@@ -131,6 +132,7 @@ dist_one_many <- function(P, dists, method, p = NULL, testNA = TRUE, unit = "log
 #' return negative values which are not defined and only occur due to the
 #' technical issues of computing x / 0 or 0 / 0 cases.
 #' @param num_threads an integer specifying the number of threads to be used for parallel computations. Default is taken from the `RCPP_PARALLEL_NUM_THREADS` environment variable, or `2` if not set.
+#' @param ranges optional numeric vector of pre-computed ranges for numeric columns. Only used with \code{method = "gower"} or \code{method = "gower_mixed"}. If NULL, standard distance computation is used.
 #' @return A matrix of distance values
 #' @examples
 #'   set.seed(2020-08-20)
@@ -138,8 +140,8 @@ dist_one_many <- function(P, dists, method, p = NULL, testNA = TRUE, unit = "log
 #'   M2 <- t(replicate(10, sample(1:10, size = 10) / 55))
 #'   result <- dist_many_many(M1, M2, method = "euclidean", testNA = FALSE)
 #' @export
-dist_many_many <- function(dists1, dists2, method, p = NULL, testNA = TRUE, unit = "log", epsilon = 0.00001, num_threads = NULL) {
-    .Call(`_philentropy_dist_many_many_cpp`, dists1, dists2, method, p, testNA, unit, epsilon, num_threads)
+dist_many_many <- function(dists1, dists2, method, p = NULL, testNA = TRUE, unit = "log", epsilon = 0.00001, num_threads = NULL, ranges = NULL) {
+    .Call(`_philentropy_dist_many_many_cpp`, dists1, dists2, method, p, testNA, unit, epsilon, num_threads, ranges)
 }
 
 distance_cpp <- function(x, method, p, test_na, unit, epsilon, num_threads) {
@@ -904,6 +906,22 @@ kumar_johnson <- function(P, Q, testNA = TRUE, epsilon = 0.00001) {
 #' @export
 avg <- function(P, Q, testNA = TRUE) {
     .Call(`_philentropy_avg`, P, Q, testNA)
+}
+
+gower_mixed_cpp <- function(x_num, x_cat, ranges, w_num, w_cat, num_threads = 2L) {
+    .Call(`_philentropy_gower_mixed_cpp`, x_num, x_cat, ranges, w_num, w_cat, num_threads)
+}
+
+gower_cross_cpp <- function(x_num, x_cat, y_num, y_cat, ranges, w_num, w_cat, num_threads = 2L) {
+    .Call(`_philentropy_gower_cross_cpp`, x_num, x_cat, y_num, y_cat, ranges, w_num, w_cat, num_threads)
+}
+
+compute_gower_ranges_cpp <- function(x_num) {
+    .Call(`_philentropy_compute_gower_ranges_cpp`, x_num)
+}
+
+compute_gower_ranges_cross_cpp <- function(x_num, y_num) {
+    .Call(`_philentropy_compute_gower_ranges_cross_cpp`, x_num, y_num)
 }
 
 as_matrix <- function(x) {

@@ -12,7 +12,8 @@ dist_many_many(
   testNA = TRUE,
   unit = "log",
   epsilon = 1e-05,
-  num_threads = NULL
+  num_threads = NULL,
+  ranges = NULL
 )
 }
 \arguments{
@@ -20,7 +21,7 @@ dist_many_many(
 
 \item{dists2}{a numeric matrix storing distributions in its rows.}
 
-\item{method}{a character string indicating whether the distance measure that should be computed.}
+\item{method}{a character string indicating whether the distance measure that should be computed. For \code{method = "gower_mixed"}, computes numeric-only Gower distance with range normalization.}
 
 \item{p}{power of the Minkowski distance.}
 
@@ -48,6 +49,8 @@ return negative values which are not defined and only occur due to the
 technical issues of computing x / 0 or 0 / 0 cases.}
 
 \item{num_threads}{an integer specifying the number of threads to be used for parallel computations. Default is taken from the `RCPP_PARALLEL_NUM_THREADS` environment variable, or `2` if not set.}
+
+\item{ranges}{optional numeric vector of pre-computed ranges for numeric columns. Only used with \code{method = "gower"} or \code{method = "gower_mixed"}. If NULL, standard distance computation is used.}
 }
 \value{
 A matrix of distance values

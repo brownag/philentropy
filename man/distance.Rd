@@ -17,11 +17,13 @@ distance(
   diag = FALSE,
   upper = FALSE,
   mute.message = getOption("philentropy.mute.message", default = FALSE),
-  num.threads = NULL
+  num.threads = NULL,
+  weights = NULL,
+  ranges = NULL
 )
 }
 \arguments{
-\item{x}{a numeric \code{data.frame} or \code{matrixF} (storing probability vectors) or a numeric \code{data.frame} or \code{matrix} storing counts (if \code{est.prob} is specified).}
+\item{x}{a numeric \code{data.frame} or \code{matrix} (storing probability vectors) or a numeric \code{data.frame} or \code{matrix} storing counts (if \code{est.prob} is specified).}
 
 \item{method}{a character string indicating whether the distance measure that should be computed.}
 
@@ -62,6 +64,10 @@ the input matrix shall be used as rownames and colnames of the output distance m
 \item{mute.message}{a logical value indicating whether or not messages printed by \code{distance} shall be muted. Default is \code{mute.message = getOption("philentropy.mute.message", default = FALSE)}. Set option "philentropy.mute.message" to control message output for the session.}
 
 \item{num.threads}{an integer specifying the number of threads to be used for parallel computations. Default is taken from the `RCPP_PARALLEL_NUM_THREADS` environment variable, or `2` if not set.}
+
+\item{weights}{optional numeric vector of weights for each feature. Only used with Gower distance methods (\code{"gower"}, \code{"gower_mixed"}, \code{"gower_numeric"}). If \code{NULL} (default), all features are weighted equally. Must have length equal to \code{ncol(x)}.}
+
+\item{ranges}{optional numeric vector of pre-computed ranges for numeric columns. Only used with Gower distance methods. If \code{NULL} (default), ranges are computed from \code{x}.}
 }
 \value{
 The following results are returned depending on the dimension of \code{x}:

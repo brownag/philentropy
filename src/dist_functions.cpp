@@ -66,6 +66,7 @@ struct OneManyWorker : public RcppParallel::Worker {
     const std::string unit;
     const double epsilon;
     const double p;
+    const RcppParallel::RVector<double> ranges;
 
     OneManyWorker(const Rcpp::NumericVector& P_in,
                   const Rcpp::NumericMatrix& dists_in,
@@ -74,15 +75,18 @@ struct OneManyWorker : public RcppParallel::Worker {
                   const bool& testNA_in,
                   const Rcpp::String& unit_in,
                   const double& epsilon_in,
-                  const double p_in)
+                  const double p_in,
+                  const Rcpp::Nullable<Rcpp::NumericVector>& ranges_in)
         : P(P_in), dists(dists_in), dist_values(dist_values_in),
           method(method_in), testNA(testNA_in),
-          unit(unit_in), epsilon(epsilon_in), p(p_in) {}
+          unit(unit_in), epsilon(epsilon_in), p(p_in),
+          ranges(ranges_in.isNotNull() ? Rcpp::as<Rcpp::NumericVector>(ranges_in) : Rcpp::NumericVector()) {}
 
     void operator()(std::size_t begin, std::size_t end) {
         for (std::size_t i = begin; i < end; ++i) {
             auto Q = dists.row(i);
-            dist_values[i] = dispatch_dist_internal(P.begin(), P.end(), Q.begin(), method, unit, epsilon, p);
+            dist_values[i] = dispatch_dist_internal(P.begin(), P.end(), Q.begin(), method, unit, epsilon, p,
+                                                     ranges.size() > 0 ? ranges.begin() : nullptr);
         }
     }
 };
@@ -91,7 +95,7 @@ struct OneManyWorker : public RcppParallel::Worker {
 //' @description This functions computes the distance/dissimilarity between one probability density functions and a set of probability density functions.
 //' @param P a numeric vector storing the first distribution.
 //' @param dists a numeric matrix storing distributions in its rows.
-//' @param method a character string indicating whether the distance measure that should be computed.
+//' @param method a character string indicating whether the distance measure that should be computed. For \code{method = "gower_mixed"}, computes numeric-only Gower distance with range normalization.
 //' @param p power of the Minkowski distance.
 //' @param testNA a logical value indicating whether or not distributions shall be checked for \code{NA} values.
 //' @param unit type of \code{log} function. Option are
@@ -114,6 +118,7 @@ struct OneManyWorker : public RcppParallel::Worker {
 //' return negative values which are not defined and only occur due to the
 //' technical issues of computing x / 0 or 0 / 0 cases.
 //' @param num_threads an integer specifying the number of threads to be used for parallel computations. Default is taken from the `RCPP_PARALLEL_NUM_THREADS` environment variable, or `2` if not set.
+//' @param ranges optional numeric vector of pre-computed ranges for numeric columns. Only used with \code{method = "gower"} or \code{method = "gower_mixed"}. If NULL, standard distance computation is used.
 //' @return A vector of distance values
 //' @examples
 //'   set.seed(2020-08-20)
@@ -122,15 +127,19 @@ struct OneManyWorker : public RcppParallel::Worker {
 //'   dist_one_many(P, M, method = "euclidean", testNA = FALSE)
 //' @export
 // [[Rcpp::export(name = "dist_one_many")]]
-Rcpp::NumericVector dist_one_many_cpp(const Rcpp::NumericVector& P, Rcpp::NumericMatrix dists, Rcpp::String method, Rcpp::Nullable<double> p = R_NilValue, bool testNA = true, Rcpp::String unit = "log", double epsilon = 0.00001, Rcpp::Nullable<int> num_threads = R_NilValue) {
+Rcpp::NumericVector dist_one_many_cpp(const Rcpp::NumericVector& P, Rcpp::NumericMatrix dists, Rcpp::String method, Rcpp::Nullable<double> p = R_NilValue, bool testNA = true, Rcpp::String unit = "log", double epsilon = 0.00001, Rcpp::Nullable<int> num_threads = R_NilValue, Rcpp::Nullable<Rcpp::NumericVector> ranges = R_NilValue) {
     std::string method_str(method);
+    // Treat gower_mixed as gower for numeric-only data
+    if (method_str == "gower_mixed") {
+        method_str = "gower";
+    }
     int nrows = dists.nrow();
     Rcpp::NumericVector dist_values(nrows);
     int n_threads = get_num_threads_cpp(num_threads);
     double p_val = p.isNotNull() ? Rcpp::as<double>(p) : NAN;
 
     validate_p_parameter(method_str, p_val);
-    OneManyWorker worker(P, dists, dist_values, method, testNA, unit, epsilon, p_val);
+    OneManyWorker worker(P, dists, dist_values, method_str, testNA, unit, epsilon, p_val, ranges);
     RcppParallel::parallelFor(0, nrows, worker, 1, n_threads);
 
     return dist_values;
@@ -144,6 +153,7 @@ struct ManyManyWorker : public RcppParallel::Worker {
     std::string unit;
     double epsilon;
     double p;
+    RcppParallel::RVector<double> ranges;
 
     ManyManyWorker(Rcpp::NumericMatrix& dists1,
                    Rcpp::NumericMatrix& dists2,
@@ -151,9 +161,11 @@ struct ManyManyWorker : public RcppParallel::Worker {
                    std::string method,
                    std::string unit,
                    double epsilon,
-                   double p)
+                   double p,
+                   const Rcpp::Nullable<Rcpp::NumericVector>& ranges_in)
         : dists1(dists1), dists2(dists2), dist_matrix(dist_matrix),
-          method(method), unit(unit), epsilon(epsilon), p(p) {}
+          method(method), unit(unit), epsilon(epsilon), p(p),
+          ranges(ranges_in.isNotNull() ? Rcpp::as<Rcpp::NumericVector>(ranges_in) : Rcpp::NumericVector()) {}
 
     void operator()(std::size_t begin, std::size_t end) {
         for (std::size_t i = begin; i < end; ++i) {
@@ -161,7 +173,8 @@ struct ManyManyWorker : public RcppParallel::Worker {
                 auto row_i = dists1.row(i);
                 auto row_j = dists2.row(j);
                 double dist = dispatch_dist_internal(row_i.begin(), row_i.end(), row_j.begin(),
-                                                     method, unit, epsilon, p);
+                                                     method, unit, epsilon, p,
+                                                     ranges.size() > 0 ? ranges.begin() : nullptr);
                 dist_matrix(i, j) = dist;
             }
         }
@@ -172,7 +185,7 @@ struct ManyManyWorker : public RcppParallel::Worker {
 //' @description This functions computes the distance/dissimilarity between two sets of probability density functions.
 //' @param dists1 a numeric matrix storing distributions in its rows.
 //' @param dists2 a numeric matrix storing distributions in its rows.
-//' @param method a character string indicating whether the distance measure that should be computed.
+//' @param method a character string indicating whether the distance measure that should be computed. For \code{method = "gower_mixed"}, computes numeric-only Gower distance with range normalization.
 //' @param p power of the Minkowski distance.
 //' @param testNA a logical value indicating whether or not distributions shall be checked for \code{NA} values.
 //' @param unit type of \code{log} function. Option are
@@ -195,6 +208,7 @@ struct ManyManyWorker : public RcppParallel::Worker {
 //' return negative values which are not defined and only occur due to the
 //' technical issues of computing x / 0 or 0 / 0 cases.
 //' @param num_threads an integer specifying the number of threads to be used for parallel computations. Default is taken from the `RCPP_PARALLEL_NUM_THREADS` environment variable, or `2` if not set.
+//' @param ranges optional numeric vector of pre-computed ranges for numeric columns. Only used with \code{method = "gower"} or \code{method = "gower_mixed"}. If NULL, standard distance computation is used.
 //' @return A matrix of distance values
 //' @examples
 //'   set.seed(2020-08-20)
@@ -203,17 +217,21 @@ struct ManyManyWorker : public RcppParallel::Worker {
 //'   result <- dist_many_many(M1, M2, method = "euclidean", testNA = FALSE)
 //' @export
 // [[Rcpp::export(name = "dist_many_many")]]
-Rcpp::NumericMatrix dist_many_many_cpp(Rcpp::NumericMatrix& dists1, Rcpp::NumericMatrix& dists2, Rcpp::String method, Rcpp::Nullable<double> p = R_NilValue, bool testNA = true, Rcpp::String unit = "log", double epsilon = 0.00001, Rcpp::Nullable<int> num_threads = R_NilValue) {
+Rcpp::NumericMatrix dist_many_many_cpp(Rcpp::NumericMatrix& dists1, Rcpp::NumericMatrix& dists2, Rcpp::String method, Rcpp::Nullable<double> p = R_NilValue, bool testNA = true, Rcpp::String unit = "log", double epsilon = 0.00001, Rcpp::Nullable<int> num_threads = R_NilValue, Rcpp::Nullable<Rcpp::NumericVector> ranges = R_NilValue) {
+    std::string method_str(method);
+    // Treat gower_mixed as gower for numeric-only data
+    if (method_str == "gower_mixed") {
+        method_str = "gower";
+    }
     int n1 = dists1.nrow();
     int n2 = dists2.nrow();
     Rcpp::NumericMatrix dist_matrix(n1, n2);
-    std::string method_str(method);
     std::string unit_str(unit);
     int n_threads = get_num_threads_cpp(num_threads);
     double p_val = p.isNotNull() ? Rcpp::as<double>(p) : NAN;
 
     validate_p_parameter(method_str, p_val);
-    ManyManyWorker worker(dists1, dists2, dist_matrix, method_str, unit_str, epsilon, p_val);
+    ManyManyWorker worker(dists1, dists2, dist_matrix, method_str, unit_str, epsilon, p_val, ranges);
     RcppParallel::parallelFor(0, n1, worker, 1, n_threads);
     return dist_matrix;
 }

@@ -45,17 +45,17 @@ namespace philentropy {
         return Rcpp::as<double >(rcpp_result_gen);
     }
 
-    inline Rcpp::NumericVector dist_one_many(const Rcpp::NumericVector& P, Rcpp::NumericMatrix dists, Rcpp::String method, Rcpp::Nullable<double> p = R_NilValue, bool testNA = true, Rcpp::String unit = "log", double epsilon = 0.00001, Rcpp::Nullable<int> num_threads = R_NilValue) {
-        typedef SEXP(*Ptr_dist_one_many)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+    inline Rcpp::NumericVector dist_one_many(const Rcpp::NumericVector& P, Rcpp::NumericMatrix dists, Rcpp::String method, Rcpp::Nullable<double> p = R_NilValue, bool testNA = true, Rcpp::String unit = "log", double epsilon = 0.00001, Rcpp::Nullable<int> num_threads = R_NilValue, Rcpp::Nullable<Rcpp::NumericVector> ranges = R_NilValue) {
+        typedef SEXP(*Ptr_dist_one_many)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr_dist_one_many p_dist_one_many = NULL;
         if (p_dist_one_many == NULL) {
-            validateSignature("Rcpp::NumericVector(*dist_one_many)(const Rcpp::NumericVector&,Rcpp::NumericMatrix,Rcpp::String,Rcpp::Nullable<double>,bool,Rcpp::String,double,Rcpp::Nullable<int>)");
+            validateSignature("Rcpp::NumericVector(*dist_one_many)(const Rcpp::NumericVector&,Rcpp::NumericMatrix,Rcpp::String,Rcpp::Nullable<double>,bool,Rcpp::String,double,Rcpp::Nullable<int>,Rcpp::Nullable<Rcpp::NumericVector>)");
             p_dist_one_many = (Ptr_dist_one_many)R_GetCCallable("philentropy", "_philentropy_dist_one_many");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_dist_one_many(Shield<SEXP>(Rcpp::wrap(P)), Shield<SEXP>(Rcpp::wrap(dists)), Shield<SEXP>(Rcpp::wrap(method)), Shield<SEXP>(Rcpp::wrap(p)), Shield<SEXP>(Rcpp::wrap(testNA)), Shield<SEXP>(Rcpp::wrap(unit)), Shield<SEXP>(Rcpp::wrap(epsilon)), Shield<SEXP>(Rcpp::wrap(num_threads)));
+            rcpp_result_gen = p_dist_one_many(Shield<SEXP>(Rcpp::wrap(P)), Shield<SEXP>(Rcpp::wrap(dists)), Shield<SEXP>(Rcpp::wrap(method)), Shield<SEXP>(Rcpp::wrap(p)), Shield<SEXP>(Rcpp::wrap(testNA)), Shield<SEXP>(Rcpp::wrap(unit)), Shield<SEXP>(Rcpp::wrap(epsilon)), Shield<SEXP>(Rcpp::wrap(num_threads)), Shield<SEXP>(Rcpp::wrap(ranges)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
@@ -66,17 +66,17 @@ namespace philentropy {
         return Rcpp::as<Rcpp::NumericVector >(rcpp_result_gen);
     }
 
-    inline Rcpp::NumericMatrix dist_many_many(Rcpp::NumericMatrix& dists1, Rcpp::NumericMatrix& dists2, Rcpp::String method, Rcpp::Nullable<double> p = R_NilValue, bool testNA = true, Rcpp::String unit = "log", double epsilon = 0.00001, Rcpp::Nullable<int> num_threads = R_NilValue) {
-        typedef SEXP(*Ptr_dist_many_many)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+    inline Rcpp::NumericMatrix dist_many_many(Rcpp::NumericMatrix& dists1, Rcpp::NumericMatrix& dists2, Rcpp::String method, Rcpp::Nullable<double> p = R_NilValue, bool testNA = true, Rcpp::String unit = "log", double epsilon = 0.00001, Rcpp::Nullable<int> num_threads = R_NilValue, Rcpp::Nullable<Rcpp::NumericVector> ranges = R_NilValue) {
+        typedef SEXP(*Ptr_dist_many_many)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr_dist_many_many p_dist_many_many = NULL;
         if (p_dist_many_many == NULL) {
-            validateSignature("Rcpp::NumericMatrix(*dist_many_many)(Rcpp::NumericMatrix&,Rcpp::NumericMatrix&,Rcpp::String,Rcpp::Nullable<double>,bool,Rcpp::String,double,Rcpp::Nullable<int>)");
+            validateSignature("Rcpp::NumericMatrix(*dist_many_many)(Rcpp::NumericMatrix&,Rcpp::NumericMatrix&,Rcpp::String,Rcpp::Nullable<double>,bool,Rcpp::String,double,Rcpp::Nullable<int>,Rcpp::Nullable<Rcpp::NumericVector>)");
             p_dist_many_many = (Ptr_dist_many_many)R_GetCCallable("philentropy", "_philentropy_dist_many_many");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_dist_many_many(Shield<SEXP>(Rcpp::wrap(dists1)), Shield<SEXP>(Rcpp::wrap(dists2)), Shield<SEXP>(Rcpp::wrap(method)), Shield<SEXP>(Rcpp::wrap(p)), Shield<SEXP>(Rcpp::wrap(testNA)), Shield<SEXP>(Rcpp::wrap(unit)), Shield<SEXP>(Rcpp::wrap(epsilon)), Shield<SEXP>(Rcpp::wrap(num_threads)));
+            rcpp_result_gen = p_dist_many_many(Shield<SEXP>(Rcpp::wrap(dists1)), Shield<SEXP>(Rcpp::wrap(dists2)), Shield<SEXP>(Rcpp::wrap(method)), Shield<SEXP>(Rcpp::wrap(p)), Shield<SEXP>(Rcpp::wrap(testNA)), Shield<SEXP>(Rcpp::wrap(unit)), Shield<SEXP>(Rcpp::wrap(epsilon)), Shield<SEXP>(Rcpp::wrap(num_threads)), Shield<SEXP>(Rcpp::wrap(ranges)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
@@ -85,6 +85,90 @@ namespace philentropy {
         if (rcpp_result_gen.inherits("try-error"))
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
         return Rcpp::as<Rcpp::NumericMatrix >(rcpp_result_gen);
+    }
+
+    inline NumericMatrix gower_mixed_cpp(NumericMatrix x_num, IntegerMatrix x_cat, NumericVector ranges, NumericVector w_num, NumericVector w_cat, int num_threads = 2) {
+        typedef SEXP(*Ptr_gower_mixed_cpp)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr_gower_mixed_cpp p_gower_mixed_cpp = NULL;
+        if (p_gower_mixed_cpp == NULL) {
+            validateSignature("NumericMatrix(*gower_mixed_cpp)(NumericMatrix,IntegerMatrix,NumericVector,NumericVector,NumericVector,int)");
+            p_gower_mixed_cpp = (Ptr_gower_mixed_cpp)R_GetCCallable("philentropy", "_philentropy_gower_mixed_cpp");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_gower_mixed_cpp(Shield<SEXP>(Rcpp::wrap(x_num)), Shield<SEXP>(Rcpp::wrap(x_cat)), Shield<SEXP>(Rcpp::wrap(ranges)), Shield<SEXP>(Rcpp::wrap(w_num)), Shield<SEXP>(Rcpp::wrap(w_cat)), Shield<SEXP>(Rcpp::wrap(num_threads)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<NumericMatrix >(rcpp_result_gen);
+    }
+
+    inline NumericMatrix gower_cross_cpp(NumericMatrix x_num, IntegerMatrix x_cat, NumericMatrix y_num, IntegerMatrix y_cat, NumericVector ranges, NumericVector w_num, NumericVector w_cat, int num_threads = 2) {
+        typedef SEXP(*Ptr_gower_cross_cpp)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr_gower_cross_cpp p_gower_cross_cpp = NULL;
+        if (p_gower_cross_cpp == NULL) {
+            validateSignature("NumericMatrix(*gower_cross_cpp)(NumericMatrix,IntegerMatrix,NumericMatrix,IntegerMatrix,NumericVector,NumericVector,NumericVector,int)");
+            p_gower_cross_cpp = (Ptr_gower_cross_cpp)R_GetCCallable("philentropy", "_philentropy_gower_cross_cpp");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_gower_cross_cpp(Shield<SEXP>(Rcpp::wrap(x_num)), Shield<SEXP>(Rcpp::wrap(x_cat)), Shield<SEXP>(Rcpp::wrap(y_num)), Shield<SEXP>(Rcpp::wrap(y_cat)), Shield<SEXP>(Rcpp::wrap(ranges)), Shield<SEXP>(Rcpp::wrap(w_num)), Shield<SEXP>(Rcpp::wrap(w_cat)), Shield<SEXP>(Rcpp::wrap(num_threads)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<NumericMatrix >(rcpp_result_gen);
+    }
+
+    inline NumericVector compute_gower_ranges_cpp(NumericMatrix x_num) {
+        typedef SEXP(*Ptr_compute_gower_ranges_cpp)(SEXP);
+        static Ptr_compute_gower_ranges_cpp p_compute_gower_ranges_cpp = NULL;
+        if (p_compute_gower_ranges_cpp == NULL) {
+            validateSignature("NumericVector(*compute_gower_ranges_cpp)(NumericMatrix)");
+            p_compute_gower_ranges_cpp = (Ptr_compute_gower_ranges_cpp)R_GetCCallable("philentropy", "_philentropy_compute_gower_ranges_cpp");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_compute_gower_ranges_cpp(Shield<SEXP>(Rcpp::wrap(x_num)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<NumericVector >(rcpp_result_gen);
+    }
+
+    inline NumericVector compute_gower_ranges_cross_cpp(NumericMatrix x_num, NumericMatrix y_num) {
+        typedef SEXP(*Ptr_compute_gower_ranges_cross_cpp)(SEXP,SEXP);
+        static Ptr_compute_gower_ranges_cross_cpp p_compute_gower_ranges_cross_cpp = NULL;
+        if (p_compute_gower_ranges_cross_cpp == NULL) {
+            validateSignature("NumericVector(*compute_gower_ranges_cross_cpp)(NumericMatrix,NumericMatrix)");
+            p_compute_gower_ranges_cross_cpp = (Ptr_compute_gower_ranges_cross_cpp)R_GetCCallable("philentropy", "_philentropy_compute_gower_ranges_cross_cpp");
+        }
+        RObject rcpp_result_gen;
+        {
+            RNGScope RCPP_rngScope_gen;
+            rcpp_result_gen = p_compute_gower_ranges_cross_cpp(Shield<SEXP>(Rcpp::wrap(x_num)), Shield<SEXP>(Rcpp::wrap(y_num)));
+        }
+        if (rcpp_result_gen.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
+            throw Rcpp::LongjumpException(rcpp_result_gen);
+        if (rcpp_result_gen.inherits("try-error"))
+            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
+        return Rcpp::as<NumericVector >(rcpp_result_gen);
     }
 
 }

@@ -144,8 +144,8 @@ RcppExport SEXP _philentropy_dist_one_one(SEXP PSEXP, SEXP QSEXP, SEXP methodSEX
     return rcpp_result_gen;
 }
 // dist_one_many_cpp
-Rcpp::NumericVector dist_one_many_cpp(const Rcpp::NumericVector& P, Rcpp::NumericMatrix dists, Rcpp::String method, Rcpp::Nullable<double> p, bool testNA, Rcpp::String unit, double epsilon, Rcpp::Nullable<int> num_threads);
-static SEXP _philentropy_dist_one_many_cpp_try(SEXP PSEXP, SEXP distsSEXP, SEXP methodSEXP, SEXP pSEXP, SEXP testNASEXP, SEXP unitSEXP, SEXP epsilonSEXP, SEXP num_threadsSEXP) {
+Rcpp::NumericVector dist_one_many_cpp(const Rcpp::NumericVector& P, Rcpp::NumericMatrix dists, Rcpp::String method, Rcpp::Nullable<double> p, bool testNA, Rcpp::String unit, double epsilon, Rcpp::Nullable<int> num_threads, Rcpp::Nullable<Rcpp::NumericVector> ranges);
+static SEXP _philentropy_dist_one_many_cpp_try(SEXP PSEXP, SEXP distsSEXP, SEXP methodSEXP, SEXP pSEXP, SEXP testNASEXP, SEXP unitSEXP, SEXP epsilonSEXP, SEXP num_threadsSEXP, SEXP rangesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type P(PSEXP);
@@ -156,15 +156,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::String >::type unit(unitSEXP);
     Rcpp::traits::input_parameter< double >::type epsilon(epsilonSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type num_threads(num_threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(dist_one_many_cpp(P, dists, method, p, testNA, unit, epsilon, num_threads));
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::NumericVector> >::type ranges(rangesSEXP);
+    rcpp_result_gen = Rcpp::wrap(dist_one_many_cpp(P, dists, method, p, testNA, unit, epsilon, num_threads, ranges));
     return rcpp_result_gen;
 END_RCPP_RETURN_ERROR
 }
-RcppExport SEXP _philentropy_dist_one_many_cpp(SEXP PSEXP, SEXP distsSEXP, SEXP methodSEXP, SEXP pSEXP, SEXP testNASEXP, SEXP unitSEXP, SEXP epsilonSEXP, SEXP num_threadsSEXP) {
+RcppExport SEXP _philentropy_dist_one_many_cpp(SEXP PSEXP, SEXP distsSEXP, SEXP methodSEXP, SEXP pSEXP, SEXP testNASEXP, SEXP unitSEXP, SEXP epsilonSEXP, SEXP num_threadsSEXP, SEXP rangesSEXP) {
     SEXP rcpp_result_gen;
     {
         Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_philentropy_dist_one_many_cpp_try(PSEXP, distsSEXP, methodSEXP, pSEXP, testNASEXP, unitSEXP, epsilonSEXP, num_threadsSEXP));
+        rcpp_result_gen = PROTECT(_philentropy_dist_one_many_cpp_try(PSEXP, distsSEXP, methodSEXP, pSEXP, testNASEXP, unitSEXP, epsilonSEXP, num_threadsSEXP, rangesSEXP));
     }
     Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
     if (rcpp_isInterrupt_gen) {
@@ -185,8 +186,8 @@ RcppExport SEXP _philentropy_dist_one_many_cpp(SEXP PSEXP, SEXP distsSEXP, SEXP 
     return rcpp_result_gen;
 }
 // dist_many_many_cpp
-Rcpp::NumericMatrix dist_many_many_cpp(Rcpp::NumericMatrix& dists1, Rcpp::NumericMatrix& dists2, Rcpp::String method, Rcpp::Nullable<double> p, bool testNA, Rcpp::String unit, double epsilon, Rcpp::Nullable<int> num_threads);
-static SEXP _philentropy_dist_many_many_cpp_try(SEXP dists1SEXP, SEXP dists2SEXP, SEXP methodSEXP, SEXP pSEXP, SEXP testNASEXP, SEXP unitSEXP, SEXP epsilonSEXP, SEXP num_threadsSEXP) {
+Rcpp::NumericMatrix dist_many_many_cpp(Rcpp::NumericMatrix& dists1, Rcpp::NumericMatrix& dists2, Rcpp::String method, Rcpp::Nullable<double> p, bool testNA, Rcpp::String unit, double epsilon, Rcpp::Nullable<int> num_threads, Rcpp::Nullable<Rcpp::NumericVector> ranges);
+static SEXP _philentropy_dist_many_many_cpp_try(SEXP dists1SEXP, SEXP dists2SEXP, SEXP methodSEXP, SEXP pSEXP, SEXP testNASEXP, SEXP unitSEXP, SEXP epsilonSEXP, SEXP num_threadsSEXP, SEXP rangesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type dists1(dists1SEXP);
@@ -197,15 +198,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::String >::type unit(unitSEXP);
     Rcpp::traits::input_parameter< double >::type epsilon(epsilonSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type num_threads(num_threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(dist_many_many_cpp(dists1, dists2, method, p, testNA, unit, epsilon, num_threads));
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::NumericVector> >::type ranges(rangesSEXP);
+    rcpp_result_gen = Rcpp::wrap(dist_many_many_cpp(dists1, dists2, method, p, testNA, unit, epsilon, num_threads, ranges));
     return rcpp_result_gen;
 END_RCPP_RETURN_ERROR
 }
-RcppExport SEXP _philentropy_dist_many_many_cpp(SEXP dists1SEXP, SEXP dists2SEXP, SEXP methodSEXP, SEXP pSEXP, SEXP testNASEXP, SEXP unitSEXP, SEXP epsilonSEXP, SEXP num_threadsSEXP) {
+RcppExport SEXP _philentropy_dist_many_many_cpp(SEXP dists1SEXP, SEXP dists2SEXP, SEXP methodSEXP, SEXP pSEXP, SEXP testNASEXP, SEXP unitSEXP, SEXP epsilonSEXP, SEXP num_threadsSEXP, SEXP rangesSEXP) {
     SEXP rcpp_result_gen;
     {
         Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_philentropy_dist_many_many_cpp_try(dists1SEXP, dists2SEXP, methodSEXP, pSEXP, testNASEXP, unitSEXP, epsilonSEXP, num_threadsSEXP));
+        rcpp_result_gen = PROTECT(_philentropy_dist_many_many_cpp_try(dists1SEXP, dists2SEXP, methodSEXP, pSEXP, testNASEXP, unitSEXP, epsilonSEXP, num_threadsSEXP, rangesSEXP));
     }
     Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
     if (rcpp_isInterrupt_gen) {
@@ -854,6 +856,155 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// gower_mixed_cpp
+NumericMatrix gower_mixed_cpp(NumericMatrix x_num, IntegerMatrix x_cat, NumericVector ranges, NumericVector w_num, NumericVector w_cat, int num_threads);
+static SEXP _philentropy_gower_mixed_cpp_try(SEXP x_numSEXP, SEXP x_catSEXP, SEXP rangesSEXP, SEXP w_numSEXP, SEXP w_catSEXP, SEXP num_threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x_num(x_numSEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type x_cat(x_catSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type ranges(rangesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type w_num(w_numSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type w_cat(w_catSEXP);
+    Rcpp::traits::input_parameter< int >::type num_threads(num_threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(gower_mixed_cpp(x_num, x_cat, ranges, w_num, w_cat, num_threads));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _philentropy_gower_mixed_cpp(SEXP x_numSEXP, SEXP x_catSEXP, SEXP rangesSEXP, SEXP w_numSEXP, SEXP w_catSEXP, SEXP num_threadsSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_philentropy_gower_mixed_cpp_try(x_numSEXP, x_catSEXP, rangesSEXP, w_numSEXP, w_catSEXP, num_threadsSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// gower_cross_cpp
+NumericMatrix gower_cross_cpp(NumericMatrix x_num, IntegerMatrix x_cat, NumericMatrix y_num, IntegerMatrix y_cat, NumericVector ranges, NumericVector w_num, NumericVector w_cat, int num_threads);
+static SEXP _philentropy_gower_cross_cpp_try(SEXP x_numSEXP, SEXP x_catSEXP, SEXP y_numSEXP, SEXP y_catSEXP, SEXP rangesSEXP, SEXP w_numSEXP, SEXP w_catSEXP, SEXP num_threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x_num(x_numSEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type x_cat(x_catSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type y_num(y_numSEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type y_cat(y_catSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type ranges(rangesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type w_num(w_numSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type w_cat(w_catSEXP);
+    Rcpp::traits::input_parameter< int >::type num_threads(num_threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(gower_cross_cpp(x_num, x_cat, y_num, y_cat, ranges, w_num, w_cat, num_threads));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _philentropy_gower_cross_cpp(SEXP x_numSEXP, SEXP x_catSEXP, SEXP y_numSEXP, SEXP y_catSEXP, SEXP rangesSEXP, SEXP w_numSEXP, SEXP w_catSEXP, SEXP num_threadsSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_philentropy_gower_cross_cpp_try(x_numSEXP, x_catSEXP, y_numSEXP, y_catSEXP, rangesSEXP, w_numSEXP, w_catSEXP, num_threadsSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// compute_gower_ranges_cpp
+NumericVector compute_gower_ranges_cpp(NumericMatrix x_num);
+static SEXP _philentropy_compute_gower_ranges_cpp_try(SEXP x_numSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x_num(x_numSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_gower_ranges_cpp(x_num));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _philentropy_compute_gower_ranges_cpp(SEXP x_numSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_philentropy_compute_gower_ranges_cpp_try(x_numSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
+// compute_gower_ranges_cross_cpp
+NumericVector compute_gower_ranges_cross_cpp(NumericMatrix x_num, NumericMatrix y_num);
+static SEXP _philentropy_compute_gower_ranges_cross_cpp_try(SEXP x_numSEXP, SEXP y_numSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x_num(x_numSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type y_num(y_numSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_gower_ranges_cross_cpp(x_num, y_num));
+    return rcpp_result_gen;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _philentropy_compute_gower_ranges_cross_cpp(SEXP x_numSEXP, SEXP y_numSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_philentropy_compute_gower_ranges_cross_cpp_try(x_numSEXP, y_numSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
+    if (rcpp_isLongjump_gen) {
+        Rcpp::internal::resumeJump(rcpp_result_gen);
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
+}
 // as_matrix
 Rcpp::NumericMatrix as_matrix(Rcpp::DataFrame x);
 RcppExport SEXP _philentropy_as_matrix(SEXP xSEXP) {
@@ -904,8 +1055,12 @@ static int _philentropy_RcppExport_validate(const char* sig) {
     static std::set<std::string> signatures;
     if (signatures.empty()) {
         signatures.insert("double(*dist_one_one)(const Rcpp::NumericVector&,const Rcpp::NumericVector&,const Rcpp::String&,Rcpp::Nullable<double>,const bool&,const Rcpp::String&,const double&)");
-        signatures.insert("Rcpp::NumericVector(*dist_one_many)(const Rcpp::NumericVector&,Rcpp::NumericMatrix,Rcpp::String,Rcpp::Nullable<double>,bool,Rcpp::String,double,Rcpp::Nullable<int>)");
-        signatures.insert("Rcpp::NumericMatrix(*dist_many_many)(Rcpp::NumericMatrix&,Rcpp::NumericMatrix&,Rcpp::String,Rcpp::Nullable<double>,bool,Rcpp::String,double,Rcpp::Nullable<int>)");
+        signatures.insert("Rcpp::NumericVector(*dist_one_many)(const Rcpp::NumericVector&,Rcpp::NumericMatrix,Rcpp::String,Rcpp::Nullable<double>,bool,Rcpp::String,double,Rcpp::Nullable<int>,Rcpp::Nullable<Rcpp::NumericVector>)");
+        signatures.insert("Rcpp::NumericMatrix(*dist_many_many)(Rcpp::NumericMatrix&,Rcpp::NumericMatrix&,Rcpp::String,Rcpp::Nullable<double>,bool,Rcpp::String,double,Rcpp::Nullable<int>,Rcpp::Nullable<Rcpp::NumericVector>)");
+        signatures.insert("NumericMatrix(*gower_mixed_cpp)(NumericMatrix,IntegerMatrix,NumericVector,NumericVector,NumericVector,int)");
+        signatures.insert("NumericMatrix(*gower_cross_cpp)(NumericMatrix,IntegerMatrix,NumericMatrix,IntegerMatrix,NumericVector,NumericVector,NumericVector,int)");
+        signatures.insert("NumericVector(*compute_gower_ranges_cpp)(NumericMatrix)");
+        signatures.insert("NumericVector(*compute_gower_ranges_cross_cpp)(NumericMatrix,NumericMatrix)");
     }
     return signatures.find(sig) != signatures.end();
 }
@@ -915,6 +1070,10 @@ RcppExport SEXP _philentropy_RcppExport_registerCCallable() {
     R_RegisterCCallable("philentropy", "_philentropy_dist_one_one", (DL_FUNC)_philentropy_dist_one_one_try);
     R_RegisterCCallable("philentropy", "_philentropy_dist_one_many", (DL_FUNC)_philentropy_dist_one_many_cpp_try);
     R_RegisterCCallable("philentropy", "_philentropy_dist_many_many", (DL_FUNC)_philentropy_dist_many_many_cpp_try);
+    R_RegisterCCallable("philentropy", "_philentropy_gower_mixed_cpp", (DL_FUNC)_philentropy_gower_mixed_cpp_try);
+    R_RegisterCCallable("philentropy", "_philentropy_gower_cross_cpp", (DL_FUNC)_philentropy_gower_cross_cpp_try);
+    R_RegisterCCallable("philentropy", "_philentropy_compute_gower_ranges_cpp", (DL_FUNC)_philentropy_compute_gower_ranges_cpp_try);
+    R_RegisterCCallable("philentropy", "_philentropy_compute_gower_ranges_cross_cpp", (DL_FUNC)_philentropy_compute_gower_ranges_cross_cpp_try);
     R_RegisterCCallable("philentropy", "_philentropy_RcppExport_validate", (DL_FUNC)_philentropy_RcppExport_validate);
     return R_NilValue;
 }
@@ -928,8 +1087,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_philentropy_pearson_corr_uncentred", (DL_FUNC) &_philentropy_pearson_corr_uncentred, 3},
     {"_philentropy_squared_pearson_corr", (DL_FUNC) &_philentropy_squared_pearson_corr, 3},
     {"_philentropy_dist_one_one", (DL_FUNC) &_philentropy_dist_one_one, 7},
-    {"_philentropy_dist_one_many_cpp", (DL_FUNC) &_philentropy_dist_one_many_cpp, 8},
-    {"_philentropy_dist_many_many_cpp", (DL_FUNC) &_philentropy_dist_many_many_cpp, 8},
+    {"_philentropy_dist_one_many_cpp", (DL_FUNC) &_philentropy_dist_one_many_cpp, 9},
+    {"_philentropy_dist_many_many_cpp", (DL_FUNC) &_philentropy_dist_many_many_cpp, 9},
     {"_philentropy_distance_cpp", (DL_FUNC) &_philentropy_distance_cpp, 7},
     {"_philentropy_custom_log2", (DL_FUNC) &_philentropy_custom_log2, 1},
     {"_philentropy_custom_log10", (DL_FUNC) &_philentropy_custom_log10, 1},
@@ -977,6 +1136,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_philentropy_taneja", (DL_FUNC) &_philentropy_taneja, 5},
     {"_philentropy_kumar_johnson", (DL_FUNC) &_philentropy_kumar_johnson, 4},
     {"_philentropy_avg", (DL_FUNC) &_philentropy_avg, 3},
+    {"_philentropy_gower_mixed_cpp", (DL_FUNC) &_philentropy_gower_mixed_cpp, 6},
+    {"_philentropy_gower_cross_cpp", (DL_FUNC) &_philentropy_gower_cross_cpp, 8},
+    {"_philentropy_compute_gower_ranges_cpp", (DL_FUNC) &_philentropy_compute_gower_ranges_cpp, 1},
+    {"_philentropy_compute_gower_ranges_cross_cpp", (DL_FUNC) &_philentropy_compute_gower_ranges_cross_cpp, 2},
     {"_philentropy_as_matrix", (DL_FUNC) &_philentropy_as_matrix, 1},
     {"_philentropy_as_data_frame", (DL_FUNC) &_philentropy_as_data_frame, 1},
     {"_philentropy_sum_rcpp", (DL_FUNC) &_philentropy_sum_rcpp, 1},
